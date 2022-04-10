@@ -14,7 +14,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char pwd[MAX_LINE_SIZE];
 	char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
-	bool illegal_cmd = FALSE; // illegal command
+	bool illegal_cmd = false; // illegal command
     	cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
 		return 0; 
@@ -22,9 +22,11 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	for (i=1; i<MAX_ARG; i++)
 	{
 		args[i] = strtok(NULL, delimiters); 
-		if (args[i] != NULL) 
-			num_arg++; 
- 
+		if (args[i] != NULL)
+		{ 
+			num_arg++;
+			printf("%s\n", args[i]); //TODO: remove
+		}
 	}
 /*************************************************/
 // Built in Commands PLEASE NOTE NOT ALL REQUIRED
@@ -33,7 +35,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-		
+		printf("this is a cd command\n"); //TODO: remove
 	} 
 	
 	/*************************************************/
@@ -79,7 +81,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
  		ExeExternal(args, cmdString);
 	 	return 0;
 	}
-	if (illegal_cmd == TRUE)
+	if (illegal_cmd == true)
 	{
 		printf("smash error: > \"%s\"\n", cmdString);
 		return 1;
@@ -99,7 +101,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 	{
     		case -1: 
 					// Add your code here (error)
-					
+					printf(" "); //TODO: remove
 					/* 
 					your code
 					*/
@@ -115,7 +117,7 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 			
 			default:
                 	// Add your code here
-					
+					printf(" "); //TODO: remove
 					/* 
 					your code
 					*/
