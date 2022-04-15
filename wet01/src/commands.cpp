@@ -2,6 +2,12 @@
 //********************************************
 #include "commands.h"
 //********************************************
+
+// cd saved variables.
+char prev_path[MAX_LINE_SIZE] = "";
+
+
+
 // function name: ExeCmd
 // Description: interperts and executes built-in commands
 // Parameters: pointer to jobs, command string
@@ -12,9 +18,9 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	char* cmd; 
 	char* args[MAX_ARG];
 	char pwd[MAX_LINE_SIZE];
-	char* delimiters = " \t\n";  
+	const char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
-	bool illegal_cmd = false; // illegal command
+	bool illegal_cmd = false;
     	cmd = strtok(lineSize, delimiters);
 	if (cmd == NULL)
 		return 0; 
@@ -25,7 +31,7 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 		if (args[i] != NULL)
 		{ 
 			num_arg++;
-			printf("%s\n", args[i]); //TODO: remove
+			//printf("%s\n", args[i]); //TODO: remove
 		}
 	}
 /*************************************************/
@@ -35,56 +41,87 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 /*************************************************/
 	if (!strcmp(cmd, "cd") ) 
 	{
-		printf("this is a cd command\n"); //TODO: remove
-	} 
-	
+		if (num_arg == 1) 
+		{
+			char current_path[MAX_LINE_SIZE];
+			char dest_path[MAX_LINE_SIZE];
+			int buffer_size = sizeof(current_path);
+			strcpy(dest_path, args[1]);
+			getcwd(current_path, buffer_size);
+			
+			/* if sestination path is "-" */
+			if (!strcmp("-", dest_path)){
+				if(!strcmp("", prev_path)){
+					std::cout << "smash error: cd: OLDPWD not set" << std::endl;
+					return CMD_ERROR;
+				}
+				if(!chdir(prev_path))
+					strcpy(prev_path, current_path);
+				else return CMD_ERROR;
+			} else {
+				if(!chdir(dest_path))
+					strcpy(prev_path, current_path);
+			}
+		}
+		else if (num_arg>1){
+			std::cout << "smash error: cd: too many arguments"<< std::endl;
+			return CMD_ERROR;
+		}
+		return CMD_SUCCESS;
+	}
 	/*************************************************/
 	else if (!strcmp(cmd, "pwd")) 
 	{
-		
+		char current_path[MAX_LINE_SIZE];
+		int buffer_size = sizeof(current_path);
+		getcwd(current_path, buffer_size);
+		std::cout << current_path << std::endl;
+		return CMD_SUCCESS;
 	}
 	
 	/*************************************************/
 	else if (!strcmp(cmd, "mkdir"))
 	{
- 		
+		return CMD_SUCCESS;
 	}
 	/*************************************************/
 	
 	else if (!strcmp(cmd, "jobs")) 
 	{
- 		
+		return CMD_SUCCESS;
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
 	{
-		
+		unsigned int pid = getpid();
+		std::cout << "smash pid is " << pid << std::endl;
+		return CMD_SUCCESS;
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
 	{
-		
+		return CMD_SUCCESS;
 	} 
 	/*************************************************/
 	else if (!strcmp(cmd, "bg")) 
 	{
-  		
+		return CMD_SUCCESS;
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-   		
+		return CMD_SUCCESS;
 	} 
 	/*************************************************/
 	else // external command
 	{
  		ExeExternal(args, cmdString);
-	 	return 0;
+	 	return CMD_SUCCESS;
 	}
 	if (illegal_cmd == true)
 	{
 		printf("smash error: > \"%s\"\n", cmdString);
-		return 1;
+		return CMD_ERROR;
 	}
     return 0;
 }
@@ -153,7 +190,7 @@ int BgCmd(char* lineSize, void* jobs)
 {
 
 	char* Command;
-	char* delimiters = " \t\n";
+	const char* delimiters = " \t\n";
 	char *args[MAX_ARG];
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{

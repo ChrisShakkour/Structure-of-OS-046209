@@ -10,6 +10,21 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 
+#include <cstdio>
+#include <iostream>
+#include <queue>         
+#include <list>
+#include <fstream>
+#include <dirent.h>
+#include <fcntl.h>
+#include <string>
+#include <sys/syscall.h>
+#include <sys/stat.h>
+
+#define CMD_SUCCESS 0
+#define CMD_ERROR 1
+
+#define BUFFERSIZE 1024
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 
