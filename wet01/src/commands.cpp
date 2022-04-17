@@ -13,7 +13,7 @@ char prev_path[MAX_LINE_SIZE] = "";
 // Parameters: pointer to jobs, command string
 // Returns: 0 - success,1 - failure
 //**************************************************************************************
-int ExeCmd(void* jobs, char* lineSize, char* cmdString)
+int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 {
 	char* cmd; 
 	char* args[MAX_ARG];
@@ -80,8 +80,48 @@ int ExeCmd(void* jobs, char* lineSize, char* cmdString)
 	}
 	
 	/*************************************************/
-	else if (!strcmp(cmd, "mkdir"))
+	else if (!strcmp(cmd, "diff"))
 	{
+		if(num_arg !=2){
+			std::cout<< "smash error: diff: invalid arguments" << std::endl;
+			return CMD_ERROR;
+		}
+		unsigned char file_1_buffer[BUFFERSIZE];
+		unsigned char file_2_buffer[BUFFERSIZE];
+
+		/*open file 1*/
+		std::ifstream file_1(args[1], std::ifstream::ate | std::ifstream::binary);
+		/*open file 2*/
+		std::ifstream file_2(args[2], std::ifstream::ate | std::ifstream::binary);
+		
+		/* if files are invalid */
+		if((!file_1) || (!file_2)) {
+			std::cout<< "1" << std::endl;
+			file_1.close();
+			file_2.close();
+			return CMD_SUCCESS;
+		}
+		
+		/* if files differ in size */
+		const std::ifstream::pos_type fileSize = file_1.tellg();
+		if(fileSize != file_2.tellg()){
+			std::cout<< "1" << std::endl;
+			file_1.close();
+			file_2.close();
+			return CMD_SUCCESS;
+		}
+		
+		/* compare content */
+		file_1.seekg(0);
+		file_2.seekg(0);
+		std::istreambuf_iterator<char> begin_1(file_1);
+		std::istreambuf_iterator<char> begin_2(file_2);
+		if(std::equal(begin_1, std::istreambuf_iterator<char>(), begin_2)){
+			std::cout<< "0" << std::endl;
+			file_1.close();
+			file_2.close();
+			return CMD_SUCCESS;
+		}
 		return CMD_SUCCESS;
 	}
 	/*************************************************/
@@ -186,7 +226,7 @@ int ExeComp(char* lineSize)
 // Parameters: command string, pointer to jobs
 // Returns: 0- BG command -1- if not
 //**************************************************************************************
-int BgCmd(char* lineSize, void* jobs)
+int BgCmd(char* lineSize, std::list<job>* jobs)
 {
 
 	char* Command;

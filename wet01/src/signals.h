@@ -10,6 +10,8 @@
 #include <signal.h>
 
 
+void ctrlCFunction(int);
+void ctrlZFunction(int);
 
 #endif
 

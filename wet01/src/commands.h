@@ -14,12 +14,16 @@
 #include <iostream>
 #include <queue>         
 #include <list>
-#include <fstream>
+
 #include <dirent.h>
 #include <fcntl.h>
 #include <string>
 #include <sys/syscall.h>
 #include <sys/stat.h>
+
+#include <fstream>
+#include <algorithm>
+
 
 #define CMD_SUCCESS 0
 #define CMD_ERROR 1
@@ -28,12 +32,39 @@
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 
-//typedef enum { FALSE , TRUE } bool;
+
+typedef enum {BACKGOUND=0, STOPPED=1} jobStatus;
+
+
+class job { public:
+	int id;
+	std::string command;
+	int pid;
+	int current_time;
+	int creation_time;
+	jobStatus status;
+
+	job(int id_, std::string command_, int pid_,
+		jobStatus status_, int current_time_) :
+		id(id_), command(command), pid(pid_),
+		current_time(current_time_), status(status_)
+	{
+		time_t cr_time = time(NULL);
+		creation_time = (int)cr_time;
+	};
+
+	int life_time(){
+		return (int)time(NULL) - creation_time + current_time; 
+	}
+};
+
+
+
 
 // functions
 int ExeComp(char* lineSize);
-int BgCmd(char* lineSize, void* jobs);
-int ExeCmd(void* jobs, char* lineSize, char* cmdString);
+int BgCmd(char* lineSize, std::list<job>* jobs);
+int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString);
 void ExeExternal(char *args[MAX_ARG], char* cmdString);
 
 #endif

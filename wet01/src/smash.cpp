@@ -11,12 +11,17 @@ main file. This file contains the main function of smash
 #include "commands.h"
 #include "signals.h"
 
+#include <list>
+
 #define MAX_LINE_SIZE 80
 #define MAXARGS 20
 
 char* L_Fg_Cmd;
-void* jobs = NULL; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
-char lineSize[MAX_LINE_SIZE]; 
+char lineSize[MAX_LINE_SIZE];
+
+std::list<job>* jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
+struct sigaction ctrlC, ctrlZ;
+
 //**************************************************************************************
 // function name: main
 // Description: main function of smash. get command from user and calls command functions
@@ -29,17 +34,26 @@ int main(int argc, char *argv[])
 	//signal declaretions
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	 /* add your code here */
+	ctrlC.sa_handler = &ctrlCFunction;
+	ctrlC.sa_flags = 0;
 	
+    ctrlZ.sa_handler = &ctrlZFunction;
+	ctrlZ.sa_flags = 0;
+
 	/************************************/
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	//set your signal handlers here
-	/* add your code here */
+	/* add your code here */    
+    //sigaction(SIGINT, &ctrlC, NULL);
+    //sigaction(SIGTSTP, &ctrlZ, NULL);
 
 	/************************************/
 
 	/************************************/
-	// Init globals 
-
+	// Init globals
+    
+    /* list pointer */
+    //jobs = NULL;
 
 	
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));
