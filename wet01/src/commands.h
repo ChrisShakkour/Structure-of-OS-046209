@@ -32,8 +32,10 @@
 #define MAX_LINE_SIZE 80
 #define MAX_ARG 20
 
+#define MAX_JOB_COUNT 100
 
-typedef enum {BACKGOUND=0, STOPPED=1} jobStatus;
+
+typedef enum {BACKGOUND, STOPPED} jobStatus;
 
 
 class job { public:

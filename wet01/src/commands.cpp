@@ -31,7 +31,6 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		if (args[i] != NULL)
 		{ 
 			num_arg++;
-			//printf("%s\n", args[i]); //TODO: remove
 		}
 	}
 /*************************************************/
@@ -177,27 +176,25 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
     	switch(pID = fork()) 
 	{
     		case -1: 
-					// Add your code here (error)
-					printf(" "); //TODO: remove
-					/* 
-					your code
-					*/
+				perror("fork");
+				break;
+					
         	case 0 :
-                	// Child Process
-               		setpgrp();
-					
-			        // Add your code here (execute an external command)
-					
-					/* 
-					your code
-					*/
+                // Child Process
+               	if(setpgrp()== -1){
+               		perror("fork child proccess failed");
+               		exit(1);
+               	}
+			    execvp(args[0], args);
+				break;
 			
 			default:
-                	// Add your code here
-					printf(" "); //TODO: remove
-					/* 
-					your code
-					*/
+                // Add your code here
+				for(int i=0; i<MAX_ARG; i++)
+					printf("arg %d, %s\n", i, args[i]);
+				
+				waitpid(pID, NULL, WUNTRACED | WCONTINUED);
+				break;
 	}
 }
 //**************************************************************************************
@@ -236,10 +233,11 @@ int BgCmd(char* lineSize, std::list<job>* jobs)
 	{
 		lineSize[strlen(lineSize)-2] = '\0';
 		// Add your code here (execute a in the background)
-					
+		
 		/* 
 		your code
 		*/
+		return CMD_SUCCESS;
 		
 	}
 	return -1;
