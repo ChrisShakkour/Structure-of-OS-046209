@@ -5,6 +5,8 @@
 
 // cd saved variables.
 char prev_path[MAX_LINE_SIZE] = "";
+bool bg_dont_wait_flag = false;
+int jobIndex=0;
 
 
 
@@ -33,6 +35,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			num_arg++;
 		}
 	}
+	bg_dont_wait_flag = false;
 /*************************************************/
 // Built in Commands PLEASE NOTE NOT ALL REQUIRED
 // ARE IN THIS CHAIN OF IF COMMANDS. PLEASE ADD
@@ -139,6 +142,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
 	{
+		//waitpid(pID, NULL, WUNTRACED | WCONTINUED); // untraced release.
+	/*if comand in bg remove from job list and wait for proccess to terminate*/
 		return CMD_SUCCESS;
 	} 
 	/*************************************************/
@@ -154,12 +159,12 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else // external command
 	{
- 		ExeExternal(args, cmdString);
+ 		ExeExternal(args, cmdString, jobs);
 	 	return CMD_SUCCESS;
 	}
 	if (illegal_cmd == true)
 	{
-		printf("smash error: > \"%s\"\n", cmdString);
+		printf("smash error:  \"%s\"\n", cmdString);
 		return CMD_ERROR;
 	}
     return 0;
@@ -170,8 +175,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 // Parameters: external command arguments, external command string
 // Returns: void
 //**************************************************************************************
-void ExeExternal(char *args[MAX_ARG], char* cmdString)
-{
+void ExeExternal(char *args[MAX_ARG], char* cmdString, std::list<job>* jobsList)
+{	
 	int pID;
     	switch(pID = fork()) 
 	{
@@ -190,10 +195,16 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString)
 			
 			default:
                 // Add your code here
-				for(int i=0; i<MAX_ARG; i++)
-					printf("arg %d, %s\n", i, args[i]);
+				//for(int i=0; i<MAX_ARG; i++)
+					//printf("arg %d, %s\n", i, args[i]);
 				
-				waitpid(pID, NULL, WUNTRACED | WCONTINUED);
+				if(!bg_dont_wait_flag){
+					waitpid(pID, NULL, WUNTRACED | WCONTINUED); //ctrl-z untraced release.
+				}
+				else {
+					if(add_job_to_jobs_list(jobsList, pID, BACKGROUND, cmdString, 0))
+						std::cout << "smash error: reached job list limit (100 jobs)" << std::endl;
+				}
 				break;
 	}
 }
@@ -229,17 +240,57 @@ int BgCmd(char* lineSize, std::list<job>* jobs)
 	char* Command;
 	const char* delimiters = " \t\n";
 	char *args[MAX_ARG];
+	char cmdString[MAX_LINE_SIZE];
+	char *bufferPtr; 
+
+	strcpy(cmdString, lineSize);
+	cmdString[strlen(cmdString)-2] = '\0';
+	bufferPtr = cmdString;
+	
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{
 		lineSize[strlen(lineSize)-2] = '\0';
-		// Add your code here (execute a in the background)
+		/*copy original command*/
+		Command = strtok(lineSize, delimiters);
+		if(Command == NULL){
+			//std::cout<< "smash error" <<std::endl;
+			return CMD_SUCCESS;	
+		}
 		
-		/* 
-		your code
-		*/
-		return CMD_SUCCESS;
-		
+        for (int i = 1; i < MAX_ARG; i++)
+        	args[i] = strtok(NULL, delimiters);
+
+        bg_dont_wait_flag = true;
+        ExeExternal(args, bufferPtr, jobs);
+		return CMD_SUCCESS;	
 	}
 	return -1;
 }
+
+
+
+bool add_job_to_jobs_list(std::list<job>* jobsList, int pID, jobStatus status, char* cmdString , int startTime){
+	
+	char cmd_buffer[MAX_LINE_SIZE];	
+	strcpy(cmd_buffer, cmdString);
+	//std::string tempString(cmdString);
+	
+	int pid=pID;
+	jobStatus stat = status;
+	int startTim = startTime;
+	
+	jobIndex++;
+	
+	// SEGMENTATION FAULT ERROR !
+	// SEGMENTATION FAULT ERROR !
+	// SEGMENTATION FAULT ERROR !
+	//job new_job(jobIndex, cmdString, pid, stat, startTim);
+	//jobsList->push_back(new_job);
+	
+	printf("PID: %d add job %s to jobs list\n", pID, cmd_buffer);
+	return 0;
+}
+
+
+
 
