@@ -1,6 +1,10 @@
 //		commands.c
 //********************************************
 #include "commands.h"
+#include "jobs.h"
+#include "signals.h"
+#include <sys/time.h>
+#include <errno.h>
 //********************************************
 
 // cd saved variables.
