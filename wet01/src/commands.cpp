@@ -159,7 +159,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	}
 	if (illegal_cmd == true)
 	{
-		printf("smash error: > \"%s\"\n", cmdString);
+		printf("smash error: \"%s\"\n", cmdString);
 		return CMD_ERROR;
 	}
     return 0;
