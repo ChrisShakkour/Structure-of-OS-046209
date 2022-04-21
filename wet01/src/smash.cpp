@@ -9,6 +9,7 @@ main file. This file contains the main function of smash
 #include <string.h>
 #include <signal.h>
 #include "commands.h"
+#include "jobs.h"
 #include "signals.h"
 
 #include <list>
