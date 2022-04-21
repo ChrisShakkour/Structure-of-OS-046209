@@ -1,6 +1,6 @@
 #include "jobs.h"
 
-JOBS jobs_g
-void * jobs= (void *)&jobs_g;
+JOBS jobs_g;
+void * jobs_gs= (void *)&jobs_g;
 
-int JOB::commands_id = 1;
+int JOBS::commands_id = 1;

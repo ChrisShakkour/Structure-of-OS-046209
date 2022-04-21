@@ -10,6 +10,9 @@
 // cd saved variables.
 char prev_path[MAX_LINE_SIZE] = "";
 
+//functions
+void printjobs();
+
 
 
 // function name: ExeCmd
@@ -131,7 +134,17 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	
 	else if (!strcmp(cmd, "jobs")) 
 	{
-		return CMD_SUCCESS;
+		if(num_arg == 0)
+		{
+			printjobs();
+			return CMD_SUCCESS;
+		}
+		else
+		{
+			illegal_cmd = true;
+		}
+		
+
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "showpid")) 
@@ -246,4 +259,13 @@ int BgCmd(char* lineSize, std::list<job>* jobs)
 	}
 	return -1;
 }
+
+//**************************************************************************************
+// function name: printjobs
+// Description:prints the list of jobs
+// Parameters: none
+// Returns: none
+//**************************************************************************************
+
+void
 

@@ -1,6 +1,9 @@
+#ifndef JOBS_H_
+#define JOBS_H_
 #include <list>
 #include <iterator>
 #include <string>
+#include <iostream>
 using namespace std;
 
 
@@ -20,7 +23,7 @@ class JOBS
 {
 public:
     list <Job_Command> commands_list;
-    Command fg_command;
+    Job_Command fg_command;
 
     static int commands_id;
 
@@ -30,7 +33,7 @@ public:
 //Global
 extern JOBS jobs_g;
 
-extern void* jobsl;
+extern void* jobs_gs;
 
 
 #endif /* JOBS_H_ */
