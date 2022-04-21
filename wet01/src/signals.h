@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+#include <list>
+
+#include "commands.h"
 
 
 void ctrlCFunction(int);

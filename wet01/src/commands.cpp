@@ -4,6 +4,8 @@
 //********************************************
 
 // cd saved variables.
+
+
 char prev_path[MAX_LINE_SIZE] = "";
 bool bg_dont_wait_flag = false;
 int jobIndex=0;
@@ -129,7 +131,18 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	
 	else if (!strcmp(cmd, "jobs")) 
-	{
+	{	
+		std::list<job>::iterator it;
+		it = jobs->begin();
+		while (it != jobs->end()) 
+		{
+			std::cout << "[" << it->jobid << "] " << it->command << " : " << it->pid << " " << 0 << " secs";
+			if (it->status != STOPPED) 
+				std::cout << std::endl;
+			else
+				std::cout << " (stopped)" << std::endl;
+			it++;
+		}
 		return CMD_SUCCESS;
 	}
 	/*************************************************/
@@ -142,20 +155,128 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "fg")) 
 	{
-		//waitpid(pID, NULL, WUNTRACED | WCONTINUED); // untraced release.
-	/*if comand in bg remove from job list and wait for proccess to terminate*/
+		// if more than 1 argument is given
+		if(num_arg > 1){
+			std::cout<< "smash error: fg: invalid arguments" << std::endl;
+			return CMD_ERROR;
+		}
+		
+		std::list<job>::iterator it;
+		int pid;
+		
+		// if no job id is given
+		if(args[1]==NULL){		
+			// and list is empty then:
+			if(!jobs->size()){
+				std::cout<< "smash error: fg: jobs list is empty" << std::endl;
+				return CMD_ERROR;
+			}
+			// and list is not empty then:
+			// remove last pushed job and 
+			// wait till job is done.
+			else {
+				it = --(jobs->end());
+				pid = it->pid;
+				std::cout << it->command << " : " << it->pid << std::endl;
+				jobs->erase(it);							// remove from job list
+				kill(pid, SIGCONT);       					// send sigcont signal for stopped jobs
+				waitpid(pid, NULL, WUNTRACED | WCONTINUED); // untraced release.				
+				return CMD_SUCCESS;
+			}
+		}
+	
+		// search for job in jobsList, 
+		// remove and wait till done
+		it = jobs->begin();
+		while (it != jobs->end()) 
+		{
+			if(it->jobid == std::atoi(args[1])){
+				pid = it->pid;
+				std::cout << it->command << " : " << it->pid << std::endl;
+				it = jobs->erase(it); 						// remove from job list
+				kill(pid, SIGCONT);    						// send sigcont signal for stopped jobs
+				waitpid(pid, NULL, WUNTRACED | WCONTINUED); // wait untill done.
+				return CMD_SUCCESS;
+			}
+			it++;
+		}
+		std::cout << "smash error: fg: job-id " << args[1] << " does not exist" << std::endl;
 		return CMD_SUCCESS;
 	} 
 	/*************************************************/
 	else if (!strcmp(cmd, "bg")) 
 	{
+		// if more than 1 argument is given
+		if(num_arg > 1){
+			std::cout<< "smash error: bg: invalid arguments" << std::endl;
+			return CMD_ERROR;
+		}
+		
+		std::list<job>::reverse_iterator it;
+		int pid;
+		
+		// if no job id is given
+		if(args[1]==NULL){		
+			// and list is empty then:
+			if(!jobs->size()){
+				std::cout<< "smash error: bg: jobs list is empty" << std::endl;
+				return CMD_ERROR;
+			}
+			// and list is not empty then:
+			// remove last pushed job that is stopped
+			else {		
+				it = jobs->rbegin();
+				while (it != jobs->rend()){
+					if(it->status == STOPPED){
+						pid = it->pid;
+						it->status = BACKGROUND;					// remove from job list
+						std::cout << it->command << " : " << it->pid << std::endl;
+						kill(pid, SIGCONT);       					// send sigcont signal for stopped jobs
+						return CMD_SUCCESS;
+					}
+					else{
+						std::cout << "smash error: bg: there are no stopped jobs to resume" << std::endl;													
+						return CMD_SUCCESS;
+					}
+					it++;
+				}		
+			}
+		}
+		// search for job in jobsList, 
+		// send continue signal
+		// iterate backwards from last element
+		it = jobs->rbegin();
+		while (it != jobs->rend()){
+			// if job id matched
+			if(it->jobid == std::atoi(args[1])){
+				// check if status stopped
+				if(it->status == STOPPED){
+					pid = it->pid;
+					it->status = BACKGROUND;					// remove from job list
+					std::cout << it->command << " : " << it->pid << std::endl;
+					kill(pid, SIGCONT);       					// send sigcont signal for stopped jobs
+					return CMD_SUCCESS;
+				}
+				else{
+					std::cout << "smash error: bg: job-id " << it->pid << " is already running in the background" << std::endl;													
+					return CMD_SUCCESS;
+				}
+			}
+			it++;
+		}				
+		std::cout << "smash error: bg: job-id " << args[1] << " does not exist" << std::endl;
 		return CMD_SUCCESS;
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
 		return CMD_SUCCESS;
-	} 
+	}
+	/*************************************************/
+	else if (!strcmp(cmd, "kill"))
+	{
+		return CMD_SUCCESS;
+	}
 	/*************************************************/
 	else // external command
 	{
@@ -190,14 +311,12 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, std::list<job>* jobsList)
                		perror("fork child proccess failed");
                		exit(1);
                	}
-			    execvp(args[0], args);
+			    execvp(args[0], args);	    
+			    perror("exec failed");
 				break;
 			
 			default:
-                // Add your code here
-				//for(int i=0; i<MAX_ARG; i++)
-					//printf("arg %d, %s\n", i, args[i]);
-				
+                
 				if(!bg_dont_wait_flag){
 					waitpid(pID, NULL, WUNTRACED | WCONTINUED); //ctrl-z untraced release.
 				}
@@ -207,26 +326,6 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, std::list<job>* jobsList)
 				}
 				break;
 	}
-}
-//**************************************************************************************
-// function name: ExeComp
-// Description: executes complicated command
-// Parameters: command string
-// Returns: 0- if complicated -1- if not
-//**************************************************************************************
-int ExeComp(char* lineSize)
-{
-	char ExtCmd[MAX_LINE_SIZE+2];
-	char *args[MAX_ARG];
-    if ((strstr(lineSize, "|")) || (strstr(lineSize, "<")) || (strstr(lineSize, ">")) || (strstr(lineSize, "*")) || (strstr(lineSize, "?")) || (strstr(lineSize, ">>")) || (strstr(lineSize, "|&")))
-    {
-		// Add your code here (execute a complicated command)
-					
-		/* 
-		your code
-		*/
-	} 
-	return -1;
 }
 //**************************************************************************************
 // function name: BgCmd
@@ -241,56 +340,71 @@ int BgCmd(char* lineSize, std::list<job>* jobs)
 	const char* delimiters = " \t\n";
 	char *args[MAX_ARG];
 	char cmdString[MAX_LINE_SIZE];
-	char *bufferPtr; 
-
+	
 	strcpy(cmdString, lineSize);
-	cmdString[strlen(cmdString)-2] = '\0';
-	bufferPtr = cmdString;
+	cmdString[strlen(cmdString)-1] = '\0';
 	
 	if (lineSize[strlen(lineSize)-2] == '&')
 	{
 		lineSize[strlen(lineSize)-2] = '\0';
 		/*copy original command*/
 		Command = strtok(lineSize, delimiters);
-		if(Command == NULL){
-			//std::cout<< "smash error" <<std::endl;
+		if(Command == NULL)
 			return CMD_SUCCESS;	
-		}
-		
+		args[0] = Command;
         for (int i = 1; i < MAX_ARG; i++)
         	args[i] = strtok(NULL, delimiters);
 
         bg_dont_wait_flag = true;
-        ExeExternal(args, bufferPtr, jobs);
+        ExeExternal(args, cmdString, jobs);
 		return CMD_SUCCESS;	
 	}
 	return -1;
 }
 
 
-
-bool add_job_to_jobs_list(std::list<job>* jobsList, int pID, jobStatus status, char* cmdString , int startTime){
-	
+//**************************************************************************************
+// function name: add_job_to_jobs_list
+// Description: adds a job to joblist
+// Parameters: 
+// Returns: 1 if job count is 100 else returns 0 
+//**************************************************************************************
+bool add_job_to_jobs_list(std::list<job>* jobsList, int pID, jobStatus status, char* cmdString, int startTime)
+{	
 	char cmd_buffer[MAX_LINE_SIZE];	
 	strcpy(cmd_buffer, cmdString);
-	//std::string tempString(cmdString);
 	
 	int pid=pID;
 	jobStatus stat = status;
 	int startTim = startTime;
 	
+	int jobCount = jobsList->size();
+	if (jobCount == 100) return CMD_ERROR;
 	jobIndex++;
+	job newJob(jobIndex, pid, stat, cmd_buffer/*, startTim*/);
+	jobsList->push_back(newJob);
 	
-	// SEGMENTATION FAULT ERROR !
-	// SEGMENTATION FAULT ERROR !
-	// SEGMENTATION FAULT ERROR !
-	//job new_job(jobIndex, cmdString, pid, stat, startTim);
-	//jobsList->push_back(new_job);
-	
-	printf("PID: %d add job %s to jobs list\n", pID, cmd_buffer);
-	return 0;
+	return CMD_SUCCESS;
 }
 
 
+//**************************************************************************************
+// function name: remove_finished_jobs
+// Description: updates jobs list, removes finished jobs  
+// Parameters: jobsList
+// Returns: NONE 
+//**************************************************************************************
+void remove_finished_jobs(std::list<job>* jobsList)
+{
+	if(!jobsList->size()) return;
+	std::list<job>::iterator it;
+	it = jobsList->begin();
+	while(it != jobsList->end()) {
+		if (waitpid(it->pid, NULL, WNOHANG)!=0){
+			it = jobsList->erase(it); // job done!
+		}
+		else it++;
+	}
+}
 
 

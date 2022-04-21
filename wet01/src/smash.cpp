@@ -19,7 +19,7 @@ main file. This file contains the main function of smash
 char* L_Fg_Cmd;
 char lineSize[MAX_LINE_SIZE];
 
-std::list<job>* jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
+std::list<job> jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
 struct sigaction ctrlC, ctrlZ;
 
 //**************************************************************************************
@@ -52,9 +52,6 @@ int main(int argc, char *argv[])
 	/************************************/
 	// Init globals
     
-    /* list pointer */
-    //jobs = NULL;
-
 	
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));
 	if (L_Fg_Cmd == NULL) 
@@ -67,12 +64,15 @@ int main(int argc, char *argv[])
 		fgets(lineSize, MAX_LINE_SIZE, stdin);
 		strcpy(cmdString, lineSize);    	
 		cmdString[strlen(lineSize)-1]='\0';
-					// perform a complicated Command
-		if(!ExeComp(lineSize)) continue; 
-					// background command	
-	 	if(!BgCmd(lineSize, jobs)) continue; 
-					// built in commands
-		ExeCmd(jobs, lineSize, cmdString);
+				
+		// remove finished jobs every new command
+		remove_finished_jobs(&jobs);
+		
+		// background command	
+	 	if(!BgCmd(lineSize, &jobs)) continue; 
+		
+	 	// built in commands
+		ExeCmd(&jobs, lineSize, cmdString);
 		
 		/* initialize for next line read*/
 		lineSize[0]='\0';
