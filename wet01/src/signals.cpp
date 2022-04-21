@@ -7,6 +7,10 @@
    Synopsis: handle the Control-C */
 #include "signals.h"
 
+#include <sys/time.h>
+
+#include "jobs.h"
+
 
 //**************************************************************************************
 // function name: main
