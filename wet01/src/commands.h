@@ -43,6 +43,7 @@ class job {
 	public:
 		int jobid;
 		int pid;
+		string name;
 		jobStatus status;
 		std::string command;	
 		//int current_time;

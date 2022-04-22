@@ -1,6 +1,9 @@
 //		commands.c
 //********************************************
 #include "commands.h"
+
+#define KILLSIG_9 9
+#define KILLSIG_15 15
 //********************************************
 
 // cd saved variables.
@@ -131,7 +134,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	
 	else if (!strcmp(cmd, "jobs")) 
-	{	
+	{			
 		std::list<job>::iterator it;
 		it = jobs->begin();
 		while (it != jobs->end()) 
@@ -270,7 +273,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-		return CMD_SUCCESS;
+	
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "kill"))
