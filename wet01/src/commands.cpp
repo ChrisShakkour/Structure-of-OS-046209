@@ -273,7 +273,55 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "quit"))
 	{
-	
+		// performing standard quit
+		if (arg[1] == NULL)
+		{
+		    int sig_pid = getpid();
+		    if (kill(sig_pid, KILLSIG_9) == -1)
+		    {
+			perror("standard quit fail");
+			return 1;
+		    }
+		}
+
+		//performing kill quit
+		const char* kill_string = "kill";
+		if (!strcmp(kill_string, arg[1])) {
+		    list<job>::iterator i;
+		    for (i = jobs->begin(); i != jobs->end(); ++i) {
+			int job_id = i->jobid;
+			int job_pid = i->pid;
+			string job_name = i->name;
+			const char *send_str = " - Sending SIGTERM... ";
+
+			cout << "[" << job_id << "]" << job_name << send_str << endl;
+			if (kill(job_pid, KILLSIG_15)) {
+			    perror("error - quit kill fail");
+			    return 1;
+			}
+			int start = (int) time(NULL);
+			while (1) {
+			    int time_wasted = (int) time(NULL) - start;
+			    int process_ended = waitpid(job_pid, NULL, WNOHANG);
+			    if (process_ended && (time_wasted < 5)) {
+				cout << "Done." << endl;
+				break;
+			    } else if (time_wasted > 5) {
+				cout << "(5 sec passed) Sending SIGKILL... Done." << endl;
+				if (kill(job_pid, KILLSIG_9 == -1)) {
+				    perror("error - quit kill fail");
+				    return 1;
+				}
+				break;
+			    }
+			}
+		    }
+		    if (kill(getpid(), KILLSIG_9) == -1) {
+			perror("quit kill fail");
+			return 1;
+		    }
+		    return 0;
+		}
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "kill"))
