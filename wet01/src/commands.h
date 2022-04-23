@@ -23,6 +23,7 @@
 
 #include <fstream>
 #include <algorithm>
+#include <iterator>
 
 
 #define CMD_SUCCESS 0
@@ -34,40 +35,63 @@
 
 #define MAX_JOB_COUNT 100
 
+using namespace std;
 
-typedef enum {BACKGOUND, STOPPED} jobStatus;
+typedef enum {BACKGROUND=1, STOPPED=2} jobStatus;
 
 
-class job { public:
-	int id;
-	std::string command;
-	int pid;
-	int current_time;
-	int creation_time;
-	jobStatus status;
-
-	job(int id_, std::string command_, int pid_,
-		jobStatus status_, int current_time_) :
-		id(id_), command(command), pid(pid_),
-		current_time(current_time_), status(status_)
-	{
+class job { 
+	public:
+		int jobid;
+		int pid;
+		string name;
+		jobStatus status;
+		std::string command;	
+		//int current_time;
+		//int creation_time;
+	
+		// constructor
+		job( int jobid_, int pid_, jobStatus status_, std::string command_){
+			jobid   = jobid_;
+			pid     = pid_;
+			status  = status_;
+			command = command_;
+		}
+		
+		
+	/*
+	job(int id_,
+		//std::string command_,
+		int pid_,
+		jobStatus status_,
+		int current_time_) {
+		
+		id = id_;
+		//strcpy(command,command_);
+		pid = pid_;
+		status = status_;
+		current_time = current_time_;
+		
 		time_t cr_time = time(NULL);
 		creation_time = (int)cr_time;
 	};
-
-	int life_time(){
-		return (int)time(NULL) - creation_time + current_time; 
-	}
+*/
+	
+	//int life_time(){
+	//	return (int)time(NULL) - creation_time + current_time; 
+	//}
 };
 
 
+// own functions
+bool add_job_to_jobs_list(std::list<job>* jobsList, int pID, jobStatus status, char* cmdString, int startTime);
+void remove_finished_jobs(std::list<job>* jobsList);
 
 
-// functions
-int ExeComp(char* lineSize);
+// given functions
 int BgCmd(char* lineSize, std::list<job>* jobs);
 int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString);
-void ExeExternal(char *args[MAX_ARG], char* cmdString);
+void ExeExternal(char *args[MAX_ARG], char* cmdString, std::list<job>* jobList);
 
 #endif
 
