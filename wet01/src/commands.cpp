@@ -4,6 +4,19 @@
 
 #define KILLSIG_9 9
 #define KILLSIG_15 15
+#define KILLSIGMAX 500
+#define MAXJOBS 500
+
+#define RUNSIG 18
+#define	STOPSIG_1 6
+#define	STOPSIG_2 19
+#define STOPSIG_3 20
+#define FINSIG_1 9
+#define FINSIG_2 15
+
+#define RUNNING 1
+#define STOPPING 0
+#define FINISHING 2
 //********************************************
 
 // cd saved variables.
@@ -326,7 +339,66 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	/*************************************************/
 	else if (!strcmp(cmd, "kill"))
 	{
-		return CMD_SUCCESS;
+		if (num_arg == 2) 
+		{
+			char signal_id[KILLSIGMAX];
+			strcpy(signal_id, arg[1]);
+			char* signal_id_moved = signal_id + 1;
+			int signal_id_int = atoi(signal_id_moved);
+			char kill_job[MAXJOBS];
+			strcpy(kill_job, args[2]);
+
+			list<job>::iterator i;
+			string error_string = "smash error: kill: ";
+			i = jobs->begin();
+			while(i != jobs->end())
+		    	{
+				if(atoi(kill_job) == i->jobid)
+				{
+					int job_pid = i->pid;
+					if (kill(job_pid, signal_id_int) == -1)
+			    		{
+				    		// assembling error message
+				    		string error_1 = "invalid arguments";
+				    		error_string += error_1;
+				    		string err_str = error_string.c_str();
+				    		perror(err_str.c_str());
+				    		return 1;
+			    		}
+					if (signal_id_int == RUNSIG)
+			    		{
+						i->status = RUNNING;
+			    		}
+					if (signal_id_int == STOPSIG_1 || signal_id_int == STOPSIG_2 || signal_id_int == STOPSIG_3)
+			    		{
+						i->status = STOPPING;
+			    		}
+					if (signal_id_int == FINSIG_1 || signal_id_int == FINSIG_2)
+			    		{
+						i->status = FINISHING;
+			    		}
+					// assembling regular message
+					string regular_message = "signal number ";
+					regular_message += signal_id;
+					string rest_reg_msg = " was sent to pid ";
+					regular_message += rest_reg_msg.c_str();
+					char pid = job_pid + '0';
+					regular_message += pid.c_str();
+					perror(regular_message.c_str());
+					return 0;
+				}
+				i++;
+			}
+		   	 // assembling another error message
+		    	string job_string = "job-id ";
+		    	error_string += job_string.c_str();
+			error_string += kill_job;
+			string error_2 = " does not exist";
+			error_string += error_2.c_str();
+			perror(error_string.c_str());
+			return 1;
+		}
+		illegal_cmd = true;
 	}
 	/*************************************************/
 	else // external command
