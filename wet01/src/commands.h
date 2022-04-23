@@ -35,6 +35,7 @@
 
 #define MAX_JOB_COUNT 100
 
+using namespace std;
 
 typedef enum {BACKGROUND=1, STOPPED=2} jobStatus;
 

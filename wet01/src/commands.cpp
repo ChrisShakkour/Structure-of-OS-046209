@@ -274,7 +274,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 	else if (!strcmp(cmd, "quit"))
 	{
 		// performing standard quit
-		if (arg[1] == NULL)
+		if (args[1] == NULL)
 		{
 		    int sig_pid = getpid();
 		    if (kill(sig_pid, KILLSIG_9) == -1)
@@ -286,7 +286,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 
 		//performing kill quit
 		const char* kill_string = "kill";
-		if (!strcmp(kill_string, arg[1])) {
+		if (!strcmp(kill_string, args[1])) {
 		    list<job>::iterator i;
 		    for (i = jobs->begin(); i != jobs->end(); ++i) {
 			int job_id = i->jobid;
