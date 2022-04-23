@@ -22,6 +22,7 @@
 #include <sys/stat.h>
 
 #include <fstream>
+#include <sstream>
 #include <algorithm>
 #include <iterator>
 
@@ -37,7 +38,7 @@
 
 using namespace std;
 
-typedef enum {BACKGROUND=1, STOPPED=2} jobStatus;
+typedef enum {BACKGROUND=1, STOPPED=2, FINISHED=3} jobStatus;
 
 
 class job { 

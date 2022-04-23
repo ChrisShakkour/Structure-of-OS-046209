@@ -342,14 +342,15 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		if (num_arg == 2) 
 		{
 			char signal_id[KILLSIGMAX];
-			strcpy(signal_id, arg[1]);
+			strcpy(signal_id, args[1]);
+			
 			char* signal_id_moved = signal_id + 1;
 			int signal_id_int = atoi(signal_id_moved);
 			char kill_job[MAXJOBS];
 			strcpy(kill_job, args[2]);
 
 			list<job>::iterator i;
-			string error_string = "smash error: kill: ";
+			string error_string = "smash error: kill:";
 			i = jobs->begin();
 			while(i != jobs->end())
 		    	{
@@ -367,22 +368,24 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			    		}
 					if (signal_id_int == RUNSIG)
 			    		{
-						i->status = RUNNING;
+						i->status = BACKGROUND;
 			    		}
 					if (signal_id_int == STOPSIG_1 || signal_id_int == STOPSIG_2 || signal_id_int == STOPSIG_3)
 			    		{
-						i->status = STOPPING;
+						i->status = STOPPED;
 			    		}
 					if (signal_id_int == FINSIG_1 || signal_id_int == FINSIG_2)
 			    		{
-						i->status = FINISHING;
+						i->status = FINISHED;
 			    		}
 					// assembling regular message
 					string regular_message = "signal number ";
-					regular_message += signal_id;
+					regular_message += signal_id_moved;
 					string rest_reg_msg = " was sent to pid ";
 					regular_message += rest_reg_msg.c_str();
-					char pid = job_pid + '0';
+					stringstream ss;
+					ss << job_pid;
+					string pid = ss.str();
 					regular_message += pid.c_str();
 					perror(regular_message.c_str());
 					return 0;
