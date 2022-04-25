@@ -348,6 +348,15 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		    }
 		    return 0;
 		}
+		else
+		{
+			int sig_pid = getpid();
+			if (kill(sig_pid, KILLSIG_9) == -1)
+		    	{
+				perror("standard quit fail");
+				return 1;
+		    	}
+		}
 	}
 	/*************************************************/
 	else if (!strcmp(cmd, "kill"))
@@ -361,9 +370,20 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			int signal_id_int = atoi(signal_id_moved);
 			char kill_job[MAXJOBS];
 			strcpy(kill_job, args[2]);
+			
 
 			list<job>::iterator i;
 			string error_string = "smash error: kill:";
+
+			if (!std::isdigit(*signal_id_moved) || !std::isdigit(args[2]))
+			{
+				// assembling error message
+				string error_1 = "invalid arguments";
+		    		error_string += error_1;
+		    		string err_str = error_string.c_str();
+		    		std::cerr << err_str.c_str() << std:: endl;
+		    		return 1;		
+			}
 			i = jobs->begin();
 			while(i != jobs->end())
 		    	{
@@ -376,7 +396,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 				    		string error_1 = "invalid arguments";
 				    		error_string += error_1;
 				    		string err_str = error_string.c_str();
-				    		perror(err_str.c_str());
+				    		std::cerr << err_str.c_str() << std:: endl;
 				    		return 1;
 			    		}
 					if (signal_id_int == RUNSIG)
@@ -400,7 +420,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 					ss << job_pid;
 					string pid = ss.str();
 					regular_message += pid.c_str();
-					perror(regular_message.c_str());
+					std::cerr << regular_message.c_str() << std:: endl;
 					return 0;
 				}
 				i++;
@@ -411,8 +431,18 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			error_string += kill_job;
 			string error_2 = " does not exist";
 			error_string += error_2.c_str();
-			perror(error_string.c_str());
+			std::cerr << error_string.c_str() << std:: endl;
 			return 1;
+		}
+		else
+		{
+			// assembling error message
+			string error_string = "smash error: kill:";
+			string error_1 = "invalid arguments";
+	    		error_string += error_1;
+	    		string err_str = error_string.c_str();
+	    		std::cerr << err_str.c_str() << std:: endl;
+	    		return 1;
 		}
 		illegal_cmd = true;
 	}
