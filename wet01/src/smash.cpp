@@ -19,7 +19,7 @@ main file. This file contains the main function of smash
 char* L_Fg_Cmd;
 char lineSize[MAX_LINE_SIZE];
 
-std::list<job>* jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
+std::list<job> jobs; //This represents the list of jobs. Please change to a preferred type (e.g array of char*)
 struct sigaction ctrlC, ctrlZ;
 
 //**************************************************************************************
@@ -44,17 +44,14 @@ int main(int argc, char *argv[])
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	//set your signal handlers here
 	/* add your code here */    
-    //sigaction(SIGINT, &ctrlC, NULL);
-    //sigaction(SIGTSTP, &ctrlZ, NULL);
+    sigaction(SIGINT, &ctrlC, NULL);
+    sigaction(SIGTSTP, &ctrlZ, NULL);
 
 	/************************************/
 
 	/************************************/
 	// Init globals
     
-    /* list pointer */
-    //jobs = NULL;
-
 	
 	L_Fg_Cmd =(char*)malloc(sizeof(char)*(MAX_LINE_SIZE+1));
 	if (L_Fg_Cmd == NULL) 
@@ -67,12 +64,16 @@ int main(int argc, char *argv[])
 		fgets(lineSize, MAX_LINE_SIZE, stdin);
 		strcpy(cmdString, lineSize);    	
 		cmdString[strlen(lineSize)-1]='\0';
-					// perform a complicated Command
-		if(!ExeComp(lineSize)) continue; 
-					// background command	
-	 	if(!BgCmd(lineSize, jobs)) continue; 
-					// built in commands
-		ExeCmd(jobs, lineSize, cmdString);
+				
+		// remove finished jobs every new command
+		remove_finished_jobs(&jobs);
+		
+		// background command	
+	 	//if(!BgCmd(lineSize, &jobs)) continue; 
+		
+		if(!BgCmd(lineSize, &jobs)); //continue; 		
+		else // built in commands
+			ExeCmd(&jobs, lineSize, cmdString);
 		
 		/* initialize for next line read*/
 		lineSize[0]='\0';
