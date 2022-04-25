@@ -25,7 +25,9 @@
 char prev_path[MAX_LINE_SIZE] = "";
 bool bg_dont_wait_flag = false;
 int jobIndex=0;
-
+bool waite_for_fg = false;
+int fg_pid = 0;
+char fg_cmdString[MAX_LINE_SIZE];
 
 
 // function name: ExeCmd
@@ -152,7 +154,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		it = jobs->begin();
 		while (it != jobs->end()) 
 		{
-			std::cout << "[" << it->jobid << "] " << it->command << " : " << it->pid << " " << 0 << " secs";
+			it->update_run_time();
+			std::cout << "[" << it->jobid << "] " << it->command << " : " << it->pid << " " << it->runTime << " secs";
 			if (it->status != STOPPED) 
 				std::cout << std::endl;
 			else
@@ -194,9 +197,13 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 				it = --(jobs->end());
 				pid = it->pid;
 				std::cout << it->command << " : " << it->pid << std::endl;
+				strcpy(fg_cmdString, &(it->command[0]));
 				jobs->erase(it);							// remove from job list
 				kill(pid, SIGCONT);       					// send sigcont signal for stopped jobs
-				waitpid(pid, NULL, WUNTRACED | WCONTINUED); // untraced release.				
+				waite_for_fg = true;
+				fg_pid = pid;
+				waitpid(pid, NULL, WUNTRACED /*| WCONTINUED*/); // untraced release.				
+				waite_for_fg = false;
 				return CMD_SUCCESS;
 			}
 		}
@@ -209,9 +216,13 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			if(it->jobid == std::atoi(args[1])){
 				pid = it->pid;
 				std::cout << it->command << " : " << it->pid << std::endl;
+				strcpy(fg_cmdString, &(it->command[0]));
 				it = jobs->erase(it); 						// remove from job list
 				kill(pid, SIGCONT);    						// send sigcont signal for stopped jobs
-				waitpid(pid, NULL, WUNTRACED | WCONTINUED); // wait untill done.
+				waite_for_fg = true;
+				fg_pid = pid;
+				waitpid(pid, NULL, WUNTRACED/* | WCONTINUED*/); // wait untill done.
+				waite_for_fg = false;
 				return CMD_SUCCESS;
 			}
 			it++;
@@ -244,6 +255,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 				it = jobs->rbegin();
 				while (it != jobs->rend()){
 					if(it->status == STOPPED){
+						it->update_run_time();
 						pid = it->pid;
 						it->status = BACKGROUND;					// remove from job list
 						std::cout << it->command << " : " << it->pid << std::endl;
@@ -267,6 +279,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			if(it->jobid == std::atoi(args[1])){
 				// check if status stopped
 				if(it->status == STOPPED){
+					it->update_run_time();
 					pid = it->pid;
 					it->status = BACKGROUND;					// remove from job list
 					std::cout << it->command << " : " << it->pid << std::endl;
@@ -307,7 +320,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			string job_name = i->name;
 			const char *send_str = " - Sending SIGTERM... ";
 
-			cout << "[" << job_id << "]" << job_name << send_str << endl;
+			cout << "[" << job_id << "]" << job_name << send_str;
 			if (kill(job_pid, KILLSIG_15)) {
 			    perror("error - quit kill fail");
 			    return 1;
@@ -444,7 +457,11 @@ void ExeExternal(char *args[MAX_ARG], char* cmdString, std::list<job>* jobsList)
 			default:
                 
 				if(!bg_dont_wait_flag){
-					waitpid(pID, NULL, WUNTRACED | WCONTINUED); //ctrl-z untraced release.
+					waite_for_fg = true;
+					fg_pid = pID;
+					strcpy(fg_cmdString, cmdString);
+					waitpid(pID, NULL, WUNTRACED | WCONTINUED);
+					waite_for_fg = false;
 				}
 				else {
 					if(add_job_to_jobs_list(jobsList, pID, BACKGROUND, cmdString, 0))

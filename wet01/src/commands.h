@@ -47,7 +47,9 @@ class job {
 		int pid;
 		string name;
 		jobStatus status;
-		std::string command;	
+		std::string command;
+		time_t startTime;;
+		int runTime;
 		//int current_time;
 		//int creation_time;
 	
@@ -57,30 +59,18 @@ class job {
 			pid     = pid_;
 			status  = status_;
 			command = command_;
+			startTime = time(NULL);
+			runTime = 0;
 		}
 		
-		
-	/*
-	job(int id_,
-		//std::string command_,
-		int pid_,
-		jobStatus status_,
-		int current_time_) {
-		
-		id = id_;
-		//strcpy(command,command_);
-		pid = pid_;
-		status = status_;
-		current_time = current_time_;
-		
-		time_t cr_time = time(NULL);
-		creation_time = (int)cr_time;
-	};
-*/
-	
-	//int life_time(){
-	//	return (int)time(NULL) - creation_time + current_time; 
-	//}
+		int update_run_time(){
+			if(status == STOPPED)
+				startTime = time(NULL);
+			else {
+				runTime += difftime(time(NULL), startTime);
+				startTime = time(NULL); 
+			}	
+		}
 };
 
 

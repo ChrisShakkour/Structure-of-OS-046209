@@ -44,8 +44,8 @@ int main(int argc, char *argv[])
 	//NOTE: the signal handlers and the function/s that sets the handler should be found in siganls.c
 	//set your signal handlers here
 	/* add your code here */    
-    //sigaction(SIGINT, &ctrlC, NULL);
-    //sigaction(SIGTSTP, &ctrlZ, NULL);
+    sigaction(SIGINT, &ctrlC, NULL);
+    sigaction(SIGTSTP, &ctrlZ, NULL);
 
 	/************************************/
 
@@ -69,10 +69,11 @@ int main(int argc, char *argv[])
 		remove_finished_jobs(&jobs);
 		
 		// background command	
-	 	if(!BgCmd(lineSize, &jobs)) continue; 
+	 	//if(!BgCmd(lineSize, &jobs)) continue; 
 		
-	 	// built in commands
-		ExeCmd(&jobs, lineSize, cmdString);
+		if(!BgCmd(lineSize, &jobs)); //continue; 		
+		else // built in commands
+			ExeCmd(&jobs, lineSize, cmdString);
 		
 		/* initialize for next line read*/
 		lineSize[0]='\0';
