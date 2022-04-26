@@ -375,7 +375,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			list<job>::iterator i;
 			string error_string = "smash error: kill:";
 
-			if (!std::isdigit(*signal_id_moved) || !std::isdigit(args[2]))
+			if (!signal_id_int || !atoi(args[2]))
 			{
 				// assembling error message
 				string error_1 = "invalid arguments";
