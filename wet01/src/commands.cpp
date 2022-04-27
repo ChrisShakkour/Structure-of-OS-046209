@@ -13,6 +13,9 @@
 #define STOPSIG_3 20
 #define FINSIG_1 9
 #define FINSIG_2 15
+#define MAXSIG 31
+#define MINSIG 0
+#define MINJOB 1
 
 #define RUNNING 1
 #define STOPPING 0
@@ -375,10 +378,10 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			list<job>::iterator i;
 			string error_string = "smash error: kill:";
 
-			if (!signal_id_int || !atoi(args[2]))
+			if(!signal_id_int || !atoi(args[2]) || (signal_id_int > MAXSIG) || (signal_id_int < MINSIG) || (atoi(kill_job) < MINJOB))
 			{
 				// assembling error message
-				string error_1 = "invalid arguments";
+				string error_1 = " invalid arguments";
 		    		error_string += error_1;
 		    		string err_str = error_string.c_str();
 		    		std::cerr << err_str.c_str() << std:: endl;
@@ -393,7 +396,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 					if (kill(job_pid, signal_id_int) == -1)
 			    		{
 				    		// assembling error message
-				    		string error_1 = "invalid arguments";
+				    		string error_1 = " invalid arguments";
 				    		error_string += error_1;
 				    		string err_str = error_string.c_str();
 				    		std::cerr << err_str.c_str() << std:: endl;
@@ -438,7 +441,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		{
 			// assembling error message
 			string error_string = "smash error: kill:";
-			string error_1 = "invalid arguments";
+			string error_1 = " invalid arguments";
 	    		error_string += error_1;
 	    		string err_str = error_string.c_str();
 	    		std::cerr << err_str.c_str() << std:: endl;
