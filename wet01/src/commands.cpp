@@ -320,10 +320,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		    for (i = jobs->begin(); i != jobs->end(); ++i) {
 			int job_id = i->jobid;
 			int job_pid = i->pid;
-			string job_name = i->name;
-			const char *send_str = " - Sending SIGTERM... ";
-
-			cout << "[" << job_id << "]" << job_name << send_str;
+			string job_name = i->command;
+			const char *send_str = " -Sending SIGTERM... ";
 			if (kill(job_pid, KILLSIG_15)) {
 			    perror("error - quit kill fail");
 			    return 1;
@@ -332,11 +330,15 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			while (1) {
 			    int time_wasted = (int) time(NULL) - start;
 			    int process_ended = waitpid(job_pid, NULL, WNOHANG);
+
 			    if (process_ended && (time_wasted < 5)) {
+				const char *send_str = " -Sending SIGTERM... ";
+				cout << "[" << job_id << "] " << job_name << send_str;
 				cout << "Done." << endl;
 				break;
 			    } else if (time_wasted > 5) {
-				cout << "(5 sec passed) Sending SIGKILL... Done." << endl;
+				cout << "[" << job_id << "] " << job_name;
+				cout << "-Sending SIGTERM...(5 sec passed) Sending SIGKILL... Done." << endl;
 				if (kill(job_pid, KILLSIG_9 == -1)) {
 				    perror("error - quit kill fail");
 				    return 1;
