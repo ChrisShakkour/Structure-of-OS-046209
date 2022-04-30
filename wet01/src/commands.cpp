@@ -305,12 +305,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		// performing standard quit
 		if (args[1] == NULL)
 		{
-		    int sig_pid = getpid();
-		    if (kill(sig_pid, KILLSIG_9) == -1)
-		    {
-			perror("standard quit fail");
-			return 1;
-		    }
+			exit(0);
 		}
 
 		//performing kill quit
@@ -323,7 +318,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			string job_name = i->command;
 			const char *send_str = " -Sending SIGTERM... ";
 			if (kill(job_pid, KILLSIG_15)) {
-			    perror("error - quit kill fail");
+			    string error_1 = "standard quit fail";
+		    	    std::cerr << error_1.c_str() << std:: endl;
 			    return 1;
 			}
 			int start = (int) time(NULL);
@@ -340,27 +336,21 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 				cout << "[" << job_id << "] " << job_name;
 				cout << "-Sending SIGTERM...(5 sec passed) Sending SIGKILL... Done." << endl;
 				if (kill(job_pid, KILLSIG_9 == -1)) {
-				    perror("error - quit kill fail");
-				    return 1;
+					string error_1 = "standard quit fail";
+		    			std::cerr << error_1.c_str() << std:: endl;
+					return 1;
 				}
 				break;
 			    }
 			}
 		    }
-		    if (kill(getpid(), KILLSIG_9) == -1) {
-			perror("quit kill fail");
-			return 1;
-		    }
+		    exit(0);
 		    return 0;
 		}
 		else
 		{
 			int sig_pid = getpid();
-			if (kill(sig_pid, KILLSIG_9) == -1)
-		    	{
-				perror("standard quit fail");
-				return 1;
-		    	}
+			exit(0);
 		}
 	}
 	/*************************************************/
