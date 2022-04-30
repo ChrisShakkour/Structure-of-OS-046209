@@ -42,7 +42,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 {
 	char* cmd; 
 	char* args[MAX_ARG];
-	char pwd[MAX_LINE_SIZE];
+//	char pwd[MAX_LINE_SIZE];
 	const char* delimiters = " \t\n";  
 	int i = 0, num_arg = 0;
 	bool illegal_cmd = false;
@@ -111,8 +111,8 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			std::cout<< "smash error: diff: invalid arguments" << std::endl;
 			return CMD_ERROR;
 		}
-		unsigned char file_1_buffer[BUFFERSIZE];
-		unsigned char file_2_buffer[BUFFERSIZE];
+		//unsigned char file_1_buffer[BUFFERSIZE];
+		//unsigned char file_2_buffer[BUFFERSIZE];
 
 		/*open file 1*/
 		std::ifstream file_1(args[1], std::ifstream::ate | std::ifstream::binary);
@@ -316,7 +316,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 			int job_id = i->jobid;
 			int job_pid = i->pid;
 			string job_name = i->command;
-			const char *send_str = " -Sending SIGTERM... ";
+			//const char *send_str = " -Sending SIGTERM... ";
 			if (kill(job_pid, KILLSIG_15)) {
 			    string error_1 = "standard quit fail";
 		    	    std::cerr << error_1.c_str() << std:: endl;
@@ -349,7 +349,7 @@ int ExeCmd(std::list<job>* jobs, char* lineSize, char* cmdString)
 		}
 		else
 		{
-			int sig_pid = getpid();
+			//int sig_pid = getpid();
 			exit(0);
 		}
 	}
@@ -544,7 +544,7 @@ bool add_job_to_jobs_list(std::list<job>* jobsList, int pID, jobStatus status, c
 	
 	int pid=pID;
 	jobStatus stat = status;
-	int startTim = startTime;
+	//int startTim = startTime;
 	
 	int jobCount = jobsList->size();
 	if (jobCount == 100) return CMD_ERROR;

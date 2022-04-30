@@ -48,7 +48,7 @@ class job {
 		string name;
 		jobStatus status;
 		std::string command;
-		time_t startTime;;
+		time_t startTime;
 		int runTime;
 		//int current_time;
 		//int creation_time;
@@ -63,7 +63,7 @@ class job {
 			runTime = 0;
 		}
 		
-		int update_run_time(){
+		void update_run_time(){
 			if(status == STOPPED)
 				startTime = time(NULL);
 			else {
