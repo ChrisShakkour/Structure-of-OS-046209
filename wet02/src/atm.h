@@ -1,15 +1,20 @@
 #ifndef ATM_H
 #define ATM_H
 
-#include "account.h"
-
+// INCLUDES
 #include <map>
 #include <string>
+#include "account.h"
+
+
+// DEFINES
+#define ATM_SLEEP 100000    //100msec
+#define ATM_OP_TIME 1000000 //1 sec
 
 
 using namespace std;
 
-
+// CLASS
 class atm 
 {
 public:

@@ -1,6 +1,5 @@
 #include "atm.h"
 
-#define ATM_SLEEP 100000
 
 //extern ofstream output_log;
 
