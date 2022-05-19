@@ -2,19 +2,19 @@
 #define ACCOUNT_H
 
 // Includes
-//#include <string>
-//#include <string.h>
-//#include <map>
-//#include <vector>         
-//#include <iostream>
-//#include <fstream>
-//#include <sstream>
+#include <string>
+#include <string.h>
+#include <map>
+#include <vector>         
+#include <iostream>
+#include <fstream>
+#include <sstream>
 #include <pthread.h>
 #include <unistd.h> 
 #include <stdio.h>
 #include <stdlib.h>
 #include <cstdlib>
-//#include <ctime>
+#include <ctime>
 
 
 // bank account structure

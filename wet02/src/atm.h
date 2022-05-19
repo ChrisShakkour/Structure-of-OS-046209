@@ -49,7 +49,7 @@ public:
         }
         
         // ATM methods
-        void wrong_password_check_and_print (int id, int account_password, int inserted_password);
+        void wrong_password_check_and_print (int acc_id, int acc_password, int user_password);
         void erase_account_by_id(int local_account_num);
         account* find_account(int inserted_acc_num, int* is_found);
         void error_print(char letter, int inserted_acc_num, int target_account, int is_found);
