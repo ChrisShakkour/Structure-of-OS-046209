@@ -70,10 +70,14 @@ void atm::error_print(char letter, int inserted_acc_num, int target_account, int
     pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
-/* description */
+/* initiating the atm function */
 bool atm::init_atm_func(void* atm_inst)
 {
-	
+    if (atm_inst == NULL)
+    {
+        return false;
+    }
+    return true;
 }
 
 /* description */
