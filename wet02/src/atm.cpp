@@ -16,10 +16,15 @@ void atm::wrong_password_check_and_print (int acc_id, int acc_password, int user
     }
 }
 
-/* description */
+/* a function that deletes an account*/
 void atm::erase_account_by_id(int local_account_num)
 {
-	
+    map<int, account>::iterator i;
+    i = map_accounts_ptr->find(local_account_num);
+    if (i != map_accounts_ptr->end())
+    {
+        map_accounts_ptr->erase(i);        
+    }
 }
 
 /* description */
