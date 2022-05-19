@@ -28,7 +28,7 @@ void atm::erase_account_by_id(int local_account_num)
 }
 
 /* a function that returns a pointer to an account selected by the user */
-account* atm::find_account(int inserted_acc_num, int* is_found)
+account* atm::find_account(int inserted_acc_num, int* account_found)
 {
 	pthread_mutex_lock(mutex_global_accounts_ptr);
 	account* account_wanted;
@@ -38,7 +38,7 @@ account* atm::find_account(int inserted_acc_num, int* is_found)
     {
 	    i->second.lock_for_readers();
 	    account_wanted = &i->second;
-	    *exist_account = 1;
+	    *account_found = 1;
 	    i->second.unlock_for_readers();
     }
 	pthread_mutex_unlock(mutex_global_accounts_ptr);
