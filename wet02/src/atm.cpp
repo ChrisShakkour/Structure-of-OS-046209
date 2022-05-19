@@ -1,13 +1,19 @@
 #include "atm.h"
 
 
-//extern ofstream output_log;
+extern ofstream output;
 
 
-/* description */
-void atm::wrong_password_check_and_print (int id, int account_password, int inserted_password)
+/* a function that determines whether the password inserted by the user
+ * is correct or not*/
+void atm::wrong_password_check_and_print (int acc_id, int acc_password, int user_password)
 {
-	
+	if (user_password != acc_password)
+    {
+	    pthread_mutex_lock(mutex_log_print_ptr);
+	    output << "Error" << atm_num << ": Your transaction failed – password for account id " << acc_id << " is incorrect" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
 }
 
 /* description */
