@@ -45,10 +45,29 @@ account* atm::find_account(int inserted_acc_num, int* account_found)
     return account_wanted;
 }
 
-/* description */
-void atm::error_print(char letter, int inserted_acc_num, int target_account, int is_found)
-{
-	
+/* a function that prints errors according to the right operation */
+void atm::error_print(char letter, int inserted_acc_num, int target_account, int is_found) {
+    pthread_mutex_lock(mutex_log_print_ptr);
+    if (letter == '0')
+    {
+        output_log << "Error " << atm_num << ": Your transaction failed – account with the same id exists" << endl;
+    }
+    else if (letter == 'T')
+    {
+        if(is_found)
+        {
+            output_log << "Error " << atm_num << ": Your transaction failed – account id " << target_account << " does not exist" << endl;
+        }
+        else
+        {
+            output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+        }
+    }
+    else
+    {
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+    }
+    pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
 /* description */
