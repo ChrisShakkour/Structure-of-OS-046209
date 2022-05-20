@@ -199,10 +199,18 @@ void atm::all_functions_caller()
     return;
 }
 
-/* description */
+/* a function that opens a new account */
 void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_balance)
 {
-	
+    sleep(1);
+    pthread_mutex_lock(mutex_global_accounts_ptr);
+    account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
+    map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
+    pthread_mutex_unlock(mutex_global_accounts_ptr);
+
+    pthread_mutex_lock(mutex_log_print_ptr);
+    output_log << atm_num << ": New account id is " << inserted_password << " with password " << inserted_password << " and initial balance " << inserted_balance << endl;
+    pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
 /* description */
