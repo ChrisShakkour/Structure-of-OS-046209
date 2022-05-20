@@ -232,10 +232,34 @@ void atm::D_function(int inserted_password, int inserted_amount, account* accoun
 	account_ptr->unlock_for_writers();
 }
 
-/* description */
+/* a function that withdraws a certain amount from a certain account*/
 void atm::W_function(int inserted_password, int inserted_amount, account* account_ptr)
 {
-	
+	account_ptr->lock_for_writers();
+	sleep(1);
+	int local_acc_num = account_ptr->account_num;
+	int local_acc_password = account_ptr->password;
+	int local_acc_balance = account_ptr->balance;
+
+    wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+    if (inserted_password == local_acc_password)
+    {
+        if (local_acc_balance < inserted_amount)
+        {
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << "Error " << atm_num << ": Your transaction failed – account id " << local_acc_num << " balance is lower than " << inserted_amount << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+        else
+        {
+            account_ptr->balance -= inserted_amount;
+            local_acc_balance = account_ptr->balance;
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << atm_num << ": Account " << local_acc_num << " new balance is " << local_acc_balance << " after " << inserted_amount << " $ was withdrew" << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+    }
+    account_ptr->unlock_for_writers();
 }
 
 /* description */
