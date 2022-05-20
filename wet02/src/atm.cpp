@@ -213,10 +213,23 @@ void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_b
     pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
-/* description */
+/* a function that deposits a certain amount to a certain account by id */
 void atm::D_function(int inserted_password, int inserted_amount, account* account_ptr)
 {
-	
+	account_ptr->lock_for_writers();
+	sleep(1);
+	int local_acc_num = account_ptr->account_num;
+	int local_acc_password = account_ptr->password;
+	wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	if (inserted_password == local_acc_password)
+    {
+	    account_ptr->balance += inserted_amount;
+	    int local_acc_balance = account_ptr->balance;
+	    pthread_mutex_lock(mutex_log_print_ptr);
+	    output_log << atm_num << ": Account" << local_acc_num << " new balance is " << local_acc_balance << " after " << inserted_amount << " $ was deposited" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+	account_ptr->unlock_for_writers();
 }
 
 /* description */
