@@ -80,10 +80,123 @@ bool atm::init_atm_func(void* atm_inst)
     return true;
 }
 
-/* description */
+/* a function that in charge of all the atms operations */
 void atm::all_functions_caller()
 {
+    ifstream txt(atm_txt_file.c_str());
+	char cmd_line;
+	string txt_line;
+
+	while(getline(txt, txt_line))
+    {
+	    if(txt_line.empty())
+            continue;
+	    stringstream line_stream(txt_line);
+	    line_stream >> cmd_line;
+	    int inserted_acc_num;
+	    line_stream >> inserted_acc_num;
+	    int inserted_password;
+	    line_stream >> inserted_password;
+	    int inserted_balance;
+	    int target_account;
+
+	    int exist_account = 0;
+	    account* account_inst;
+	    account_inst = find_account(inserted_acc_num, &exist_account);
+	    switch(cmd_line)
+        {
+	        
+            case 'O':
+                line_stream >> inserted_balance;
+                if(exist_account)
+                {
+                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                }
+                else
+                {
+                    O_function(inserted_acc_num, inserted_password, inserted_balance);
+                }
+                break;
+
+            case 'D':
+                line_stream >> inserted_balance;
+                if (exist_account)
+                {
+                    D_function(inserted_password, inserted_balance, account_inst);
+                }
+                else
+                {
+                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                }
+                break;
+
+            case 'W':
+                line_stream >> inserted_balance;
+                if (exist_account)
+                {
+                    W_function(inserted_password, inserted_balance, account_inst);
+                }
+                else
+                {
+                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                }
+                break;
+
+            case 'B':
+                if (exist_account)
+                {
+                    B_function(inserted_password, account_inst);
+                }
+                else
+                {
+                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                }
+                break;
+
+            case 'Q':
+                if (exist_account)
+                {
+                    if(exist_account)
+                    {
+                        Q_function(inserted_password, account_inst);
+                    }
+                }
+                else
+                {
+                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                }
+                break;
+
+            case 'T':
+                line_stream >> target_account >> inserted_balance;
+                int exist_acc_target = 0;
+                account* target_acc_inst;
+                target_acc_inst = find_account(target_account, &exist_acc_target);
+
+                if(exist_account & exist_acc_target)
+                {
+                    T_function(inserted_password, inserted_balance, account_inst, target_acc_inst);
+                }
+                else
+                {
+                    error_print(cmd_line, inserted_acc_num, target_account, exist_account);
+                }
+                break;
+        }
+
+        // if there is an illegal command
+        if ((cmd_line != 'O') && (cmd_line != 'D') && (cmd_line != 'W') && (cmd_line != 'B') && (cmd_line != 'Q') && (cmd_line != 'T'))
+        {
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << "Command is illegal" << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+        // the atm will go to sleep after any command
+        usleep(ATM_SLEEP);
+    }
 	
+	txt.close();
+    return;
 }
 
 /* description */
