@@ -16,6 +16,20 @@ int num_of_atm;
 // output file
 ofstream output_log;
 
+/* a function who is being called by the atm threads*/
+void* atm_routine(void* atm_in)
+{
+    atm* atm_mask = (atm*)atm_in;
+    if (atm_mask->init_atm_func(atm_in))
+    {
+        atm_mask->all_functions_caller();
+        delete atm_mask;
+        pthread_exit(NULL);
+    }
+    delete atm_mask;
+	pthread_exit(NULL);
+}
+
 
 int main(int argc, char* argv[])
 {	
@@ -96,19 +110,6 @@ void* bank_commission_routine(void* bank)
 	pthread_exit(NULL);
 }
 
-/* a function who is being called by the atm threads*/
-void* atm_routine(void* atm)
-{
-    atm* atm_mask = (atm*)atm;
-    if (atm_mask->init_atm_func(atm))
-    {
-        atm_mask->all_functions_caller();
-        delete atm_mask;
-        pthread_exit(NULL);
-    }
-    delete atm_mask;
-	pthread_exit(NULL);
-}
 
 
 
