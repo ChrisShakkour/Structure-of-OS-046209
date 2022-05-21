@@ -1,0 +1,109 @@
+#include "account.h"
+using namespace std;
+
+extern list<Atm> atms;
+extern list<Account> accounts;
+extern list<string> files;
+
+bool finished_atms = false;
+
+extern pthread_mutex_t mutex_list_accounts_reader;
+extern pthread_mutex_t mutex_list_accounts_writer;
+
+extern pthread_mutex_t mutex_output_writer;
+
+int bank_amount;
+
+void* print_routine(void* main_bank)
+{
+    while (finished_atms == false)
+    {
+        pthread_mutex_lock(&mutex_list_accounts_reader);
+        number_of_list_readers++;
+        if (number_of_list_readers == 1) {
+            pthread_mutex_unlock(&mutex_list_accounts_writer);
+        }
+        else if (number_of_list_readers == 2){
+            pthread_mutex_lock(&mutex_list_accounts_writer);
+        }
+        printf("\033[2J");
+        printf("\033[1;1H");
+        cout << "Current Bank Status" << endl;
+        list<Account>::iterator it;
+        for (it = accounts.begin(); it != accounts.end(); ++it) {
+            it->print_status();
+        }
+        pthread_mutex_unlock(&mutex_list_accounts_reader);
+        usleep(500000);
+    }
+    pthread_exit(NULL);
+}
+
+// This function is being called by the bank commission thread
+void* commission_routine(void* main_bank)
+{
+    bank_amount = 0;
+    int rand = 0;
+    while (finished_atms == false)
+    {
+        sleep(3);
+        rand = (rand() % 5) + 1;
+        pthread_mutex_lock(&mutex_list_accounts_reader);
+        number_of_list_readers++;
+        if (number_of_list_readers == 1) {
+            pthread_mutex_unlock(&mutex_list_accounts_writer);
+        }
+        else if (number_of_list_readers == 2){
+            pthread_mutex_lock(&mutex_list_accounts_writer);
+        }
+        pthread_mutex_ulock(&mutex_list_accounts_reader);
+        for (it = accounts.begin(); it != accounts.end(); ++it) {
+            it->take_commision(precent);
+        }
+    }
+    pthread_exit(NULL);
+}
+
+int main(int argc, char* argv[])
+{
+    list<p_thread> pthreads;
+    // Checks the correction of inserted arguments
+    if (argc <= 1)
+    {
+        cout << "Bank error: illegal arguments" <<endl;
+        exit(1);
+    }
+    int num_of_atm = argc - 1;
+    for (int i = 1; i < num_of_atm; i++) {
+        string file = argv[i];
+        files.push_back(file);
+    }
+
+    for (int i = 0; i < num_of_atm; i++) {
+        p_thread atm_thread;
+        pthreads.push_back(atm_thread);
+        if (pthread_create(&atm_thread, NULL, atm_routine, (void *) i)) {
+            perror("Error: thread fail");
+        }
+    }
+
+    p_thread print_status;
+    if (pthread_create(&print_status, NULL, atm_routine, (void*)i))
+    {
+        perror("Error: thread fail");
+    }
+
+    p_thread commision;
+    if (pthread_create(&commision, NULL, commission_routine, (void*)i))
+    {
+        perror("Error: thread fail");
+    }
+    list<pthread>::iterator it;
+    for (it = pthreads.begin(); it != pthreads.end(); ++it) {
+        if (pthread_join(it, NULL))
+        {
+            perror("Error: thread join fail");
+        }
+    }
+    finished_atms = true;
+}
