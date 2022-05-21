@@ -96,18 +96,20 @@ void* bank_commission_routine(void* bank)
 	pthread_exit(NULL);
 }
 
-
+/* a function who is being called by the atm threads*/
 void* atm_routine(void* atm)
 {
-	// TODO: remove the code below until ##
-	cout << "atm routine called" << endl;
-	sleep(3);
-	cout << "atm routine done" << endl;
-	// ##
-	
-	
+    atm* atm_mask = (atm*)atm;
+    if (atm_mask->init_atm_func(atm))
+    {
+        atm_mask->all_functions_caller();
+        delete atm_mask;
+        pthread_exit(NULL);
+    }
+    delete atm_mask;
 	pthread_exit(NULL);
 }
+
 
 
 void* bank_status_routine(void* bank)
