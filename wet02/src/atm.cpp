@@ -185,10 +185,53 @@ void atm::Q_function(int inserted_password, account* account_ptr)
     }
 }
 
-/* description */
+/* a function that transfers a certain amount from a certain account to another*/
 void atm::T_function(int inserted_password_src, int inserted_amount, account* account_src_ptr, account* account_dest_ptr)
 {
-	
+    account_src_ptr->lock_for_writers();
+    account_dest_ptr->lock_for_writers();
+    sleep(1);
+    int local_acc_src_num = account_src_ptr->account_num;
+    int local_acc_src_password = account_src_ptr->password;
+    int local_acc_src_balance = account_src_ptr->balance;
+    int local_acc_dst_num = account_dest_ptr->account_num;
+
+    wrong_password_check_and_print(local_acc_src_num, local_acc_src_password, inserted_password_src);
+
+    if(local_acc_src_password == inserted_password_src)
+    {
+        bool transfered = false;
+        if (local_acc_dst_num == local_acc_src_num)
+        {
+            transfered = true;
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << "new account balance is " << local_acc_src_balance << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+
+        if ((local_acc_src_balance >= inserted_amount) && !transfered)
+        {
+            account_src_ptr->balance -= inserted_amount;
+            account_dest_ptr->balance += inserted_amount;
+
+            local_acc_src_balance = account_src_ptr->balance;
+            int local_acc_dst_balance = account_dest_ptr->balance;
+
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << "new account balance is " << local_acc_src_balance << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+
+        else if ((local_acc_src_balance < inserted_amount) && !transfered)
+        {
+            pthread_mutex_lock(mutex_log_print_ptr);
+            output_log << "Error " << atm_num << ": Your transaction failed – account id " << local_acc_src_num << " balance is lower than " << inserted_amount << endl;
+            pthread_mutex_unlock(mutex_log_print_ptr);
+        }
+    }
+    
+    account_src_ptr->unlock_for_writers();
+    account_dest_ptr->unlock_for_writers();
 }
 
 /* a function that in charge of all the atms operations */
