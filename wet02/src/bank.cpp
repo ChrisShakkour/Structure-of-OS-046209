@@ -20,6 +20,15 @@ int num_of_atm;
 // output file
 ofstream output_log;
 
+bool bank::init_print_bank_func(void* main_bank)
+{
+	if (main_bank == NULL)
+	{
+		return false;
+	}
+	return true;
+}
+
 /* a function who is being called by the atm threads*/
 void* atm_routine(void* atm_in)
 {
