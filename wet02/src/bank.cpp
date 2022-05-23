@@ -16,6 +16,36 @@ int num_of_atm;
 // output file
 ofstream output_log;
 
+// a function who takes random commission from all the accounts
+bool bank::commission()
+{
+    pthread_mutex_lock(&mutex_global_accounts);
+    int tot_comiss = 0;
+    map<int, account>::iterator i;
+    srand((unsigned) time(0));
+    double rand_num = (rand() % 2) + 2;
+    map<int, account>::iterator begin_i = map_accounts_ptr->begin();
+    map<int, account>::iterator last_i = map_accounts_ptr->end();
+
+    for (i = begin_i; i != last_i; ++i)
+    {
+        i->second.lock_for_writers();
+        int curr_balance = i->second.balance;
+        int curr_comiss = (int)((rand_num / 100) * curr_balance);
+        i->second.balance = curr_balance - curr_comiss;
+        int curr_acc = i->second.acc_num;
+        pthread_mutex_lock(&mutex_log_print);
+        output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << "\n";
+        pthread_mutex_unlock(&mutex_log_print);
+        tot_comiss += curr_comiss;
+        i->second.unlock_for_writers();
+    }
+    pthread_mutex_unlock(&mutex_global_accounts);
+    current_balance_bank += tot_comiss;
+    if (!is_atm_finished) {return false;}
+    else {return true;}
+}
+
 /* a function who is being called by the atm threads*/
 void* atm_routine(void* atm_in)
 {
