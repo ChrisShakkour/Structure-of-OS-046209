@@ -37,7 +37,7 @@ bool bank::commission()
         int curr_balance = i->second.balance;
         int curr_comiss = (int)((rand_num / 100) * curr_balance);
         i->second.balance = curr_balance - curr_comiss;
-        int curr_acc = i->second.acc_num;
+        int curr_acc = i->second.account_num;
         pthread_mutex_lock(&mutex_log_print);
         output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << "\n";
         pthread_mutex_unlock(&mutex_log_print);
