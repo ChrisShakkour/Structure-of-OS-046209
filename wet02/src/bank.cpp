@@ -1,6 +1,10 @@
 
 #include "bank.h"
 
+using namespace std;
+#define PRINT_DELAY 500000
+#define COMMISSION_DELAY 3
+
 // GLOBAL VARIABLES
 vector<string> files_vector;
 
