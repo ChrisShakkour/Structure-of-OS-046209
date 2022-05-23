@@ -98,20 +98,26 @@ int main(int argc, char* argv[])
 }
 
 
-void* bank_commission_routine(void* bank)
+/*a function who is in charge on the commission thread*/
+void* bank_commission_routine(void* main_bank)
 {
-	// TODO: remove the code below until ##
-	cout << "commision routine called" << endl;
-	sleep(5);
-	cout << "commision routine done" << endl;
-	// ##
-	
-	
-	pthread_exit(NULL);
+    bool finished_bank;
+    bank* bank_type = (bank*)main_bank;
+    if(bank_type->init_print_bank_func(main_bank))
+    {
+        while (true)
+        {
+            finished_bank = bank_type->commission();
+            sleep(COMMISSION_DELAY);
+            if (finished_bank)
+                break;
+        }
+        pthread_exit(NULL);
+        delete(bank_type);
+    }
+    pthread_exit(NULL);
+    delete(bank_type);
 }
-
-
-
 
 void* bank_status_routine(void* bank)
 {
