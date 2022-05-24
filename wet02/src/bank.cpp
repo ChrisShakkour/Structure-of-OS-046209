@@ -121,6 +121,27 @@ void* bank_commission_routine(void* main_bank)
     delete(bank_type);
 }
 
+/* a function who is being called by the bank print thread*/
+void* bank_status_routine(void* main_bank)
+{
+    bank* bank_type = (bank*)main_bank;
+    bool finished_bank;
+    if(bank_type->init_print_bank_func(main_bank))
+    {
+        while (true)
+        {
+            finished_bank = bank_type->bank_balance_print();
+            usleep(PRINT_DELAY);
+            if (finished_bank)
+                break;
+        }
+        pthread_exit(NULL);
+        delete(bank_type);
+    }
+	pthread_exit(NULL);
+    delete(bank_type);
+}
+
 int main(int argc, char* argv[])
 {	
 	// exit if no args provided
