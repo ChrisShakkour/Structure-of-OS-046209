@@ -50,6 +50,33 @@ bool bank::commission()
     else {return true;}
 }
 
+// This function prints the bank's balance
+bool bank::bank_balance_print()
+{
+    pthread_mutex_lock(&mutex_global_accounts);
+    printf("\033[2J");
+    printf("\033[1;1H");
+    cout << "Current Bank Status" << endl;
+    map<int, account>::iterator i;
+    map<int, account>::iterator i_begin = map_accounts_ptr->begin();
+    map<int, account>::iterator i_last = map_accounts_ptr->end();
+    for (i = i_begin; i != i_last; ++i)
+    {
+        i->second.lock_for_readers();
+        int curr_acc_num = i->second.account_num;
+        int curr_acc_balance = i->second.balance;
+        int curr_acc_password = i->second.password;
+        i->second.unlock_for_readers();
+        cout << "Account " << curr_acc_num << ": Balance – " << curr_acc_balance << " $, Account Password – " << curr_acc_password << endl;
+    }
+    cout << "." << endl;
+    cout << "." << endl;
+    cout << "The Bank has " << current_balance_bank << " $" << endl;
+    pthread_mutex_unlock(&mutex_global_accounts);
+    if(!is_atm_finished) {return false;}
+    else {return true;}
+}
+
 bool bank::init_print_bank_func(void* main_bank)
 {
 	if (main_bank == NULL)
