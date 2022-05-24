@@ -26,7 +26,7 @@ using namespace std;
 bool  is_file_exist(const char *fileName);
 void* bank_commission_routine(void* main_bank);
 void* atm_routine(void* atm_in);
-void* bank_status_routine(void* bank);
+void* bank_status_routine(void* main_bank);
 int main(int argc, char* argv[]);
 
 
