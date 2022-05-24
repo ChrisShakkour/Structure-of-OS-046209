@@ -208,19 +208,6 @@ int main(int argc, char* argv[])
     return 0;
 }
 
-void* bank_status_routine(void* bank)
-{
-	// TODO: remove the code below until ##
-	cout << "print routine called" << endl;
-	sleep(2);
-	cout << "print routine done" << endl;
-	// ##
-	
-	
-	pthread_exit(NULL);
-}
-
-
 bool is_file_exist(const char *fileName)
 {
     std::ifstream infile(fileName);
