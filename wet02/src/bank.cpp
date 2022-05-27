@@ -27,7 +27,7 @@ bool bank::commission()
     int tot_comiss = 0;
     map<int, account>::iterator i;
     srand((unsigned) time(0));
-    double rand_num = (rand() % 2) + 2;
+    double rand_num = (rand() % 5) + 1;
     map<int, account>::iterator begin_i = map_accounts_ptr->begin();
     map<int, account>::iterator last_i = map_accounts_ptr->end();
 

@@ -83,14 +83,23 @@ bool atm::init_atm_func(void* atm_inst)
 /* a function that opens a new account */
 void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_balance)
 {
+	bool acc_exists = false;
     sleep(1);
     pthread_mutex_lock(mutex_global_accounts_ptr);
-    account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
-    map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
+    // check if account exists before creating a new account
+    if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end())
+    	acc_exists = true;
+    else {
+    	account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
+    	map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
+    }
     pthread_mutex_unlock(mutex_global_accounts_ptr);
 
     pthread_mutex_lock(mutex_log_print_ptr);
-    output_log << atm_num << ": New account id is " << inserted_password << " with password " << inserted_password << " and initial balance " << inserted_balance << endl;
+    if(acc_exists)
+    	output_log << atm_num << ": your transaction failed - account with the same id exists" << endl;
+    else
+    	output_log << atm_num << ": New account id is " << inserted_acc_num << " with password " << inserted_password << " and initial balance " << inserted_balance << endl;
     pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
@@ -107,7 +116,7 @@ void atm::D_function(int inserted_password, int inserted_amount, account* accoun
 	    account_ptr->balance += inserted_amount;
 	    int local_acc_balance = account_ptr->balance;
 	    pthread_mutex_lock(mutex_log_print_ptr);
-	    output_log << atm_num << ": Account" << local_acc_num << " new balance is " << local_acc_balance << " after " << inserted_amount << " $ was deposited" << endl;
+	    output_log << atm_num << ": Account " << local_acc_num << " new balance is " << local_acc_balance << " after " << inserted_amount << " $ was deposited" << endl;
 	    pthread_mutex_unlock(mutex_log_print_ptr);
     }
 	account_ptr->unlock_for_writers();
@@ -175,7 +184,7 @@ void atm::Q_function(int inserted_password, account* account_ptr)
 
     if (inserted_password == local_acc_password)
     {
-        pthread_mutex_lock(mutex_log_print_ptr);
+        pthread_mutex_lock(mutex_global_accounts_ptr);
         int local_acc_balance = account_ptr->balance;
         erase_account_by_id(local_acc_num);
         pthread_mutex_lock(mutex_log_print_ptr);
@@ -198,14 +207,15 @@ void atm::T_function(int inserted_password_src, int inserted_amount, account* ac
 
     wrong_password_check_and_print(local_acc_src_num, local_acc_src_password, inserted_password_src);
 
+	bool transfered = false;
+    
     if(local_acc_src_password == inserted_password_src)
-    {
-        bool transfered = false;
-        if (local_acc_dst_num == local_acc_src_num)
+    {	
+    	if (local_acc_dst_num == local_acc_src_num)
         {
             transfered = true;
             pthread_mutex_lock(mutex_log_print_ptr);
-            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << "new account balance is " << local_acc_src_balance << endl;
+            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << " new account balance is " << local_acc_src_balance << " new target balance is " << local_acc_src_balance << endl;
             pthread_mutex_unlock(mutex_log_print_ptr);
         }
 
@@ -218,10 +228,9 @@ void atm::T_function(int inserted_password_src, int inserted_amount, account* ac
             int local_acc_dst_balance = account_dest_ptr->balance;
 
             pthread_mutex_lock(mutex_log_print_ptr);
-            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << "new account balance is " << local_acc_src_balance << endl;
+            output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << " new account balance is " << local_acc_src_balance << " new target balance is " << account_dest_ptr->balance << endl;
             pthread_mutex_unlock(mutex_log_print_ptr);
         }
-
         else if ((local_acc_src_balance < inserted_amount) && !transfered)
         {
             pthread_mutex_lock(mutex_log_print_ptr);
