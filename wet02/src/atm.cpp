@@ -225,7 +225,6 @@ void atm::T_function(int inserted_password_src, int inserted_amount, account* ac
             account_dest_ptr->balance += inserted_amount;
 
             local_acc_src_balance = account_src_ptr->balance;
-            int local_acc_dst_balance = account_dest_ptr->balance;
 
             pthread_mutex_lock(mutex_log_print_ptr);
             output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_src_num << " to account " << local_acc_dst_num << " new account balance is " << local_acc_src_balance << " new target balance is " << account_dest_ptr->balance << endl;
