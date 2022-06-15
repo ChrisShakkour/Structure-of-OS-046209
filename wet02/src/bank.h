@@ -42,6 +42,7 @@ public:
 	int current_balance_bank;
 	int is_atm_finished;
 	int number_of_readers;
+	int total_atm;
 	
 	pthread_mutex_t mutex_log_print;
 	// This mutex will be used for locking while we print to the screen
@@ -53,7 +54,7 @@ public:
 
 	bank(map<int, account>* map_accounts_ptr_inst, vector<atm>* vector_all_atm_ptr_inst, int num_of_atm_inst) : \
 		map_accounts_ptr(map_accounts_ptr_inst), vector_all_atm_ptr(vector_all_atm_ptr_inst), 					\
-		num_of_atm(num_of_atm_inst) 
+		num_of_atm(num_of_atm_inst),total_atm(num_of_atm_inst)
 		{
 			current_balance_bank = 0;
 			is_atm_finished = 0;
@@ -73,7 +74,8 @@ public:
 		pthread_mutex_destroy(&mutex_bank_read);
 		pthread_mutex_destroy(&mutex_bank_write);
 	};
-	
+
+	int* GetNumOfAtmsVar(){return &total_atm;}
 	void lock_for_writers() {pthread_mutex_lock(&mutex_bank_write);}	
 	void unlock_for_writers() {pthread_mutex_unlock(&mutex_bank_write);}
 	
