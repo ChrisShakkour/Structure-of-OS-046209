@@ -19,6 +19,7 @@ class atm
 {
 public:
         int atm_num;
+        int num_of_atm;
  
         // This ADT enables to go over all accounts by using its ID's as the key
         map<int, account>* map_accounts_ptr;
