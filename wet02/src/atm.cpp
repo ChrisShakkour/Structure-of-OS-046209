@@ -84,8 +84,8 @@ bool atm::init_atm_func(void* atm_inst)
 void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_balance)
 {
 	bool acc_exists = false;
-    sleep(1);
     pthread_mutex_lock(mutex_global_accounts_ptr);
+    sleep(1);
     // check if account exists before creating a new account
     if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end())
     	acc_exists = true;
