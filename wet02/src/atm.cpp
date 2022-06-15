@@ -84,6 +84,7 @@ bool atm::init_atm_func(void* atm_inst)
 void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_balance)
 {
 	bool acc_exists = false;
+
     pthread_mutex_lock(mutex_global_accounts_ptr);
     sleep(1);
     // check if account exists before creating a new account
@@ -356,6 +357,10 @@ void atm::all_functions_caller()
         // the atm will go to sleep after any command
         usleep(ATM_SLEEP);
     }
+
+	pthread_mutex_lock(&amount_mtx);
+	--total_atm;
+	pthread_mutex_unlock(&amount_mtx);
 	
 	txt.close();
     return;
