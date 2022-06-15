@@ -38,7 +38,6 @@ public:
 	map<int, account>* map_accounts_ptr;
 	// This ADT enables to go over all atms
 	vector<atm>* vector_all_atm_ptr;
-	int num_of_atm;
 	int current_balance_bank;
 	int is_atm_finished;
 	int number_of_readers;
