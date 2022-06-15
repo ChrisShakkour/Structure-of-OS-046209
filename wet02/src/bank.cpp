@@ -107,7 +107,7 @@ void* bank_commission_routine(void* main_bank)
     bank* bank_type = (bank*)main_bank;
     if(bank_type->init_print_bank_func(main_bank))
     {
-        while (true)
+        while (*(bank_type->GetNumOfAtmsVar())!=0)
         {
             finished_bank = bank_type->commission();
             sleep(COMMISSION_DELAY);
@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 	// atm threads pointers.
 	pthread_t* atm_thread_ptr = new pthread_t[num_of_atm];
     for (int i = 0; i < num_of_atm; i++) {
-        temp_atm = new atm(i+1, &map_of_accounts, files_vector[i], &main_bank->mutex_log_print, &main_bank->mutex_global_accounts);
+        temp_atm = new atm(i+1, &map_of_accounts, files_vector[i], &main_bank->mutex_log_print, &main_bank->mutex_global_accounts,main_bank->GetNumOfAtmsVar());
         if (pthread_create(&atm_thread_ptr[i], NULL, atm_routine, (void *)temp_atm)) {
             perror("Error: thread fail");
         }
