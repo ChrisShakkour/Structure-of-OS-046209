@@ -93,9 +93,9 @@ void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_b
     	account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
     	map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
     }
-    pthread_mutex_unlock(mutex_global_accounts_ptr);
+    pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
 
-    pthread_mutex_lock(mutex_log_print_ptr);
+    pthread_mutex_lock(atm::mutex_log_print_ptr);
     if(acc_exists)
     	output_log << atm_num << ": your transaction failed - account with the same id exists" << endl;
     else
