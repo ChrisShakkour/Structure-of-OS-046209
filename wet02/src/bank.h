@@ -41,6 +41,7 @@ public:
 	int current_balance_bank;
 	int is_atm_finished;
 	int number_of_readers;
+	int num_of_atm;
 	
 	pthread_mutex_t mutex_log_print;
 	// This mutex will be used for locking while we print to the screen
