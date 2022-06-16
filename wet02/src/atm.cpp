@@ -106,6 +106,7 @@ void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_b
 /* a function that deposits a certain amount to a certain account by id */
 void atm::D_function(int inserted_password, int inserted_amount, account* account_ptr)
 {
+	if(!account_ptr){return;}			
 	account_ptr->lock_for_writers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
@@ -125,6 +126,7 @@ void atm::D_function(int inserted_password, int inserted_amount, account* accoun
 /* a function that withdraws a certain amount from a certain account*/
 void atm::W_function(int inserted_password, int inserted_amount, account* account_ptr)
 {
+	if(!account_ptr){return;}	
 	account_ptr->lock_for_writers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
@@ -155,6 +157,7 @@ void atm::W_function(int inserted_password, int inserted_amount, account* accoun
 /* a function who prints the balance of a certain account by id */
 void atm::B_function(int inserted_password, account* account_ptr)
 {
+	if(!account_ptr){return;}	
 	account_ptr->lock_for_readers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
@@ -174,6 +177,7 @@ void atm::B_function(int inserted_password, account* account_ptr)
 /* a function that removes an account by his id */
 void atm::Q_function(int inserted_password, account* account_ptr)
 {
+	if(!account_ptr){return;}	
 	account_ptr->lock_for_readers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
@@ -197,6 +201,8 @@ void atm::Q_function(int inserted_password, account* account_ptr)
 /* a function that transfers a certain amount from a certain account to another*/
 void atm::T_function(int inserted_password_src, int inserted_amount, account* account_src_ptr, account* account_dest_ptr)
 {
+    if(!account_src_ptr){return;}
+    if(!account_dest_ptr){return;}
     account_src_ptr->lock_for_writers();
     account_dest_ptr->lock_for_writers();
     sleep(1);
