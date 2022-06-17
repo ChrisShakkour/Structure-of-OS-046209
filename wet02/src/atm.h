@@ -56,11 +56,11 @@ public:
         bool init_atm_func(void* atm_inst);
         void all_functions_caller();
         void O_function(int inserted_acc_num, int inserted_password, int inserted_balance);
-        void D_function(int inserted_password, int inserted_amount, account* account_ptr);
-        void W_function(int inserted_password, int inserted_amount, account* account_ptr);
-        void B_function(int inserted_password, account* account_ptr);
-        void Q_function(int inserted_password, account* account_ptr);
-        void T_function(int inserted_password_src, int inserted_amount, account* account_src_ptr, account* account_dest_ptr);
+        void D_function(int inserted_acc_num, int inserted_password, int inserted_amount);
+        void W_function(int inserted_acc_num, int inserted_password, int inserted_amount);
+        void B_function(int inserted_acc_num, int inserted_password);
+        void Q_function(int inserted_acc_num, int inserted_password);
+        void T_function(int inserted_acc_num, int inserted_password, int inserted_amount, int target_acc_num);
 };
 
 #endif

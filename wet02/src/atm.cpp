@@ -4,6 +4,19 @@
 extern ofstream output_log;
 
 
+/*
+
+bool exist_account(int account_id){
+	for (list<Account>::iterator it=bank.accounts_list.begin(); it != bank.accounts_list.end(); it++) {
+		if((*it).account_id == account_id){
+	return true;
+}
+}
+return false;
+}
+*/
+
+
 /* a function that determines whether the password inserted by the user
  * is correct or not*/
 void atm::wrong_password_check_and_print (int acc_id, int acc_password, int user_password)
@@ -23,6 +36,7 @@ void atm::erase_account_by_id(int local_account_num)
     i = map_accounts_ptr->find(local_account_num);
     if (i != map_accounts_ptr->end())
     {
+    	
         map_accounts_ptr->erase(i);        
     }
 }
@@ -70,6 +84,8 @@ void atm::error_print(char letter, int inserted_acc_num, int target_account, int
     pthread_mutex_unlock(mutex_log_print_ptr);
 }
 
+
+
 /* initiating the atm function */
 bool atm::init_atm_func(void* atm_inst)
 {
@@ -80,35 +96,88 @@ bool atm::init_atm_func(void* atm_inst)
     return true;
 }
 
+
+
 /* a function that opens a new account */
 void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_balance)
 {
-	bool acc_exists = false;
-    pthread_mutex_lock(mutex_global_accounts_ptr);
-    sleep(1);
-    // check if account exists before creating a new account
-    if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end())
-    	acc_exists = true;
-    else {
-    	account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
-    	map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
-    }
-    pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	sleep(1);
 
-    pthread_mutex_lock(atm::mutex_log_print_ptr);
-    if(acc_exists)
-    	output_log << atm_num << ": your transaction failed - account with the same id exists" << endl;
-    else
+	// #########################
+    // locking global map
+    // if map is empty create account
+	// else iterate over to check if exists
+	// unlock map mutex
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()){
+	    pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+		pthread_mutex_lock(atm::mutex_log_print_ptr);
+		output_log << atm_num << ": your transaction failed - account with the same id exists" << endl;
+		pthread_mutex_unlock(atm::mutex_log_print_ptr);
+	}
+	else {
+		account account_inst = account(inserted_acc_num, inserted_password, inserted_balance);
+    	map_accounts_ptr->insert(pair<int, account>(inserted_acc_num, account_inst));
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(atm::mutex_log_print_ptr);
     	output_log << atm_num << ": New account id is " << inserted_acc_num << " with password " << inserted_password << " and initial balance " << inserted_balance << endl;
-    pthread_mutex_unlock(mutex_log_print_ptr);
+    	pthread_mutex_unlock(atm::mutex_log_print_ptr);    			
+    }
 }
 
+
+
+
 /* a function that deposits a certain amount to a certain account by id */
-void atm::D_function(int inserted_password, int inserted_amount, account* account_ptr)
+void atm::D_function(int inserted_acc_num, int inserted_password, int inserted_amount)
 {
-	if(!account_ptr){return;}			
-	account_ptr->lock_for_writers();
 	sleep(1);
+	int local_acc_num;
+	int local_acc_password;
+	int local_acc_balance;
+	
+	// #########################
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
+		map<int, account>::iterator It;
+	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    {
+	    	if(It->second.account_num == inserted_acc_num){
+	    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	    		
+	    		It->second.lock_for_writers();
+	    		local_acc_num = It->second.account_num;
+	    		local_acc_password = It->second.password;
+				local_acc_balance = It->second.balance;
+	    		It->second.unlock_for_writers();
+	    			    		
+	    		wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	    		if(inserted_password == local_acc_password)
+	    		{
+		    		It->second.lock_for_readers();	    		
+		    		It->second.balance += inserted_amount;
+					It->second.unlock_for_readers();
+		    							
+					pthread_mutex_lock(mutex_log_print_ptr);
+					output_log << atm_num << ": Account " << local_acc_num << " new balance is " << (local_acc_balance+inserted_amount) << " after " << inserted_amount << " $ was deposited" << endl;
+					pthread_mutex_unlock(mutex_log_print_ptr);
+				}  		
+	    		return;
+	    	}	        
+	    }
+	}	
+    else {
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(mutex_log_print_ptr);
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+    
+	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	return;
+		
+	/*
+	account_ptr->lock_for_writers();
 	int local_acc_num = account_ptr->account_num;
 	int local_acc_password = account_ptr->password;
 	wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
@@ -121,12 +190,71 @@ void atm::D_function(int inserted_password, int inserted_amount, account* accoun
 	    pthread_mutex_unlock(mutex_log_print_ptr);
     }
 	account_ptr->unlock_for_writers();
+	*/
 }
 
+
+
+
 /* a function that withdraws a certain amount from a certain account*/
-void atm::W_function(int inserted_password, int inserted_amount, account* account_ptr)
+void atm::W_function(int inserted_acc_num, int inserted_password, int inserted_amount)
 {
-	if(!account_ptr){return;}	
+	sleep(1);
+	int local_acc_num;
+	int local_acc_password;
+	int local_acc_balance;
+	
+	// #########################
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
+		map<int, account>::iterator It;
+	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    {
+	    	if(It->second.account_num == inserted_acc_num){
+	    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	    		It->second.lock_for_writers();
+	    		local_acc_num = It->second.account_num;
+	    		local_acc_password = It->second.password;
+				local_acc_balance = It->second.balance;
+	    		It->second.unlock_for_writers();
+
+				wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	    		if(inserted_password == local_acc_password)
+	    		{
+	    			if (local_acc_balance < inserted_amount)
+		            {
+		                pthread_mutex_lock(mutex_log_print_ptr);
+		                output_log << "Error " << atm_num << ": Your transaction failed – account id " << local_acc_num << " balance is lower than " << inserted_amount << endl;
+		                pthread_mutex_unlock(mutex_log_print_ptr);
+		            }
+		            else
+		            {
+						It->second.lock_for_readers();	    		
+						It->second.balance -= inserted_amount;			            
+						It->second.unlock_for_readers();
+
+						pthread_mutex_lock(mutex_log_print_ptr);
+						output_log << atm_num << ": Account " << local_acc_num << " new balance is " << (local_acc_balance-inserted_amount) << " after " << inserted_amount << " $ was withdrew" << endl;
+						pthread_mutex_unlock(mutex_log_print_ptr);
+		            }
+		        }  		
+	    		return;
+	    	}	        
+	    }
+	}	
+    else {
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(mutex_log_print_ptr);
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+    
+	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	return;
+
+	
+	/*
+	//if(!account_ptr){return;}	
 	account_ptr->lock_for_writers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
@@ -152,13 +280,62 @@ void atm::W_function(int inserted_password, int inserted_amount, account* accoun
         }
     }
     account_ptr->unlock_for_writers();
+    */
 }
 
+
+
+
+
 /* a function who prints the balance of a certain account by id */
-void atm::B_function(int inserted_password, account* account_ptr)
-{
-	if(!account_ptr){return;}	
+void atm::B_function(int inserted_acc_num, int inserted_password)
+{	
+	sleep(1);
+	int local_acc_num;
+	int local_acc_password;
+	int local_acc_balance;
+	
+	// #########################
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
+		map<int, account>::iterator It;
+	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    {
+	    	if(It->second.account_num == inserted_acc_num){
+	    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	    		
+	    		It->second.lock_for_writers();
+	    		local_acc_num = It->second.account_num;
+	    		local_acc_password = It->second.password;
+				local_acc_balance = It->second.balance;
+	    		It->second.unlock_for_writers();
+	    			    		
+	    		wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	    		if(inserted_password == local_acc_password)
+	    		{
+		    		pthread_mutex_lock(mutex_log_print_ptr);
+		            output_log << atm_num << ": Account " << local_acc_num << " balance is " << local_acc_balance << endl;
+					pthread_mutex_unlock(mutex_log_print_ptr);
+				}  		
+	    		return;
+	    	}	        
+	    }
+	}	
+    else {
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(mutex_log_print_ptr);
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+    
+	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	return;
+	
+	
+	/*
+	//if(!account_ptr){return;}	
 	account_ptr->lock_for_readers();
+	//account_ptr->lock_for_writers();
 	sleep(1);
 	int local_acc_num = account_ptr->account_num;
 	int local_acc_password = account_ptr->password;
@@ -172,14 +349,64 @@ void atm::B_function(int inserted_password, account* account_ptr)
         pthread_mutex_unlock(mutex_log_print_ptr);
     }
     account_ptr->unlock_for_readers();
+    //account_ptr->unlock_for_writers();
+     */
 }
 
+
+
+
+
 /* a function that removes an account by his id */
-void atm::Q_function(int inserted_password, account* account_ptr)
+void atm::Q_function(int inserted_acc_num, int inserted_password)
 {
-	if(!account_ptr){return;}	
-	account_ptr->lock_for_readers();
 	sleep(1);
+	int local_acc_num;
+	int local_acc_password;
+	int local_acc_balance;
+	
+	// #########################
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
+		map<int, account>::iterator It;
+	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    {
+	    	if(It->second.account_num == inserted_acc_num){	            
+	    		It->second.lock_for_writers();
+	    		local_acc_num = It->second.account_num;
+	    		local_acc_password = It->second.password;
+				local_acc_balance = It->second.balance;
+	    		It->second.unlock_for_writers();
+
+	    		wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	    		if(inserted_password == local_acc_password)
+	    		{
+		    		//delete It->second;
+		    		map_accounts_ptr->erase(It);
+		    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+		    		pthread_mutex_lock(mutex_log_print_ptr);
+		            output_log << atm_num << ": Account " << local_acc_num << " is now closed. Balance was " << local_acc_balance << endl;
+					pthread_mutex_unlock(mutex_log_print_ptr);
+				}  		
+	    		return;
+	    	}	        
+	    }
+	}	
+    else {
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(mutex_log_print_ptr);
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+    
+	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	return;
+	
+	/*
+	//if(!account_ptr){return;}	
+	sleep(1);
+	pthread_mutex_lock(mutex_global_accounts_ptr);
+	account_ptr->lock_for_readers();
 	int local_acc_num = account_ptr->account_num;
 	int local_acc_password = account_ptr->password;
 
@@ -188,20 +415,113 @@ void atm::Q_function(int inserted_password, account* account_ptr)
 
     if (inserted_password == local_acc_password)
     {
-        pthread_mutex_lock(mutex_global_accounts_ptr);
+        //pthread_mutex_lock(mutex_global_accounts_ptr);
         int local_acc_balance = account_ptr->balance;
         erase_account_by_id(local_acc_num);
         pthread_mutex_lock(mutex_log_print_ptr);
-        output_log << atm_num << ": Account" << local_acc_num << " is now closed. Balance was " << local_acc_balance << endl;
+        output_log << atm_num << ": Account " << local_acc_num << " is now closed. Balance was " << local_acc_balance << endl;
         pthread_mutex_unlock(mutex_log_print_ptr);
-        pthread_mutex_unlock(mutex_global_accounts_ptr);
+        //pthread_mutex_unlock(mutex_global_accounts_ptr);
     }
+    pthread_mutex_unlock(mutex_global_accounts_ptr);
+    */
 }
 
+
+
 /* a function that transfers a certain amount from a certain account to another*/
-void atm::T_function(int inserted_password_src, int inserted_amount, account* account_src_ptr, account* account_dest_ptr)
+void atm::T_function(int inserted_acc_num, int inserted_password, int inserted_amount, int target_acc_num)
 {
-    if(!account_src_ptr){return;}
+	sleep(1);
+	
+	account* src_acc;
+	
+	int local_acc_num;
+	int local_acc_password;
+	int local_acc_balance;
+	int target_acc_balance;
+	
+	// #########################
+	pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end())
+	{	
+		map<int, account>::iterator It;
+	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    {
+	    	if(It->second.account_num == inserted_acc_num){
+	    		src_acc = &(It->second);
+	    		//pthread_mutex_unlock(atm::mutex_global_accounts_ptr);	    		
+	    		It->second.lock_for_writers();
+	    		local_acc_num = It->second.account_num;
+	    		local_acc_password = It->second.password;
+				local_acc_balance = It->second.balance;
+	    		It->second.unlock_for_writers();    		
+	    		wrong_password_check_and_print(local_acc_num, local_acc_password, inserted_password);
+	    		if(inserted_password == local_acc_password)
+	    		{
+//	    			pthread_mutex_lock(atm::mutex_global_accounts_ptr);
+	    			if(map_accounts_ptr->find(target_acc_num) != map_accounts_ptr->end())
+	    			{
+	    			    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
+	    			    {
+	    			    	if(It->second.account_num == target_acc_num){
+	    			    		It->second.lock_for_writers();
+	    						target_acc_balance = It->second.balance;
+	    			    		It->second.unlock_for_writers();    		
+	    			            if (local_acc_balance >= inserted_amount){
+
+	    			            	src_acc->lock_for_readers();
+	    			                src_acc->balance -= inserted_amount;
+	    			                src_acc->unlock_for_readers();
+	    			                
+	    			            	It->second.unlock_for_readers();	    			                
+	    			                It->second.balance += inserted_amount;
+	    			                It->second.unlock_for_readers();
+	    			                
+	    			                pthread_mutex_lock(mutex_log_print_ptr);
+	    			                output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_num << " to account " << target_acc_num << " new account balance is " << (local_acc_balance-inserted_amount) << " new target balance is " << (target_acc_balance+inserted_amount) << endl;
+	    			                pthread_mutex_unlock(mutex_log_print_ptr);
+	    			            }
+	    			            else {
+		    			    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	    			                pthread_mutex_lock(mutex_log_print_ptr);
+	    			                output_log << "Error " << atm_num << ": Your transaction failed – account id " << local_acc_num << " balance is lower than " << inserted_amount << endl;
+	    			                pthread_mutex_unlock(mutex_log_print_ptr);
+	    			                return;
+	    			            }
+	    			        }
+	    			    }
+	    			}
+					else {
+						pthread_mutex_lock(mutex_log_print_ptr);
+						output_log << "Error " << atm_num << ": Your transaction failed – account id " << target_acc_num << " does not exist" << endl;
+						pthread_mutex_unlock(mutex_log_print_ptr);
+					}	
+	    		}
+	    		pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+				return;	    		
+	    	}	        
+	    }
+	}	
+    else {
+    	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+    	pthread_mutex_lock(mutex_log_print_ptr);
+        output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	    pthread_mutex_unlock(mutex_log_print_ptr);
+    }
+    
+	pthread_mutex_unlock(atm::mutex_global_accounts_ptr);
+	return;
+
+	
+	/*
+	            output_log << "Error " << atm_num << ": Your transaction failed – account id " << target_account << " does not exist" << endl;
+        }
+        else
+        {
+            output_log << "Error " << atm_num << ": Your transaction failed – account id " << inserted_acc_num << " does not exist" << endl;
+	
+	if(!account_src_ptr){return;}
     if(!account_dest_ptr){return;}
     account_src_ptr->lock_for_writers();
     account_dest_ptr->lock_for_writers();
@@ -246,6 +566,7 @@ void atm::T_function(int inserted_password_src, int inserted_amount, account* ac
     
     account_src_ptr->unlock_for_writers();
     account_dest_ptr->unlock_for_writers();
+    */
 }
 
 /* a function that in charge of all the atms operations */
@@ -254,75 +575,80 @@ void atm::all_functions_caller()
     ifstream txt(atm_txt_file.c_str());
 	char cmd_line;
 	string txt_line;
-
+	int inserted_acc_num;
+	int inserted_password;
+    int inserted_balance;
+    int target_account;
+    int exist_account = 0;
+    
+	
+	
 	while(getline(txt, txt_line))
     {
 	    if(txt_line.empty())
             continue;
 	    stringstream line_stream(txt_line);
 	    line_stream >> cmd_line;
-	    int inserted_acc_num;
 	    line_stream >> inserted_acc_num;
-	    int inserted_password;
 	    line_stream >> inserted_password;
-	    int inserted_balance;
-	    int target_account;
-
-	    int exist_account = 0;
-	    account* account_inst;
-	    account_inst = find_account(inserted_acc_num, &exist_account);
+	    //account* account_inst;
+	    //account_inst = find_account(inserted_acc_num, &exist_account);
 	    switch(cmd_line)
         {
 	        
             case 'O':
                 line_stream >> inserted_balance;
-                if(exist_account)
-                {
-                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
-                }
-                else
-                {
-                    O_function(inserted_acc_num, inserted_password, inserted_balance);
-                }
+                //if(exist_account)
+                //{
+                //    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                //}
+                //else
+                //{
+                	O_function(inserted_acc_num, inserted_password, inserted_balance);
+                //}
                 break;
 
             case 'D':
                 line_stream >> inserted_balance;
-                if (exist_account)
-                {
-                    D_function(inserted_password, inserted_balance, account_inst);
-                }
-                else
-                {
-                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
-                }
+                //if (exist_account)
+                //{
+                    D_function(inserted_acc_num, inserted_password, inserted_balance);
+                //}
+                //else
+                //{
+                //    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                //}
                 break;
 
             case 'W':
                 line_stream >> inserted_balance;
-                if (exist_account)
-                {
-                    W_function(inserted_password, inserted_balance, account_inst);
-                }
-                else
-                {
-                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
-                }
+                //if (exist_account)
+                //{
+                    W_function(inserted_acc_num, inserted_password, inserted_balance);
+                //}
+                //else
+                //{
+                //    error_print(cmd_line, inserted_acc_num, 0, exist_account);
+                //}
                 break;
 
             case 'B':
-                if (exist_account)
-                {
-                    B_function(inserted_password, account_inst);
-                }
-                else
-                {
-                    error_print(cmd_line, inserted_acc_num, 0, exist_account);
-                }
-                break;
+          
+          //  	if (exist_account)
+          //      {
+                    B_function(inserted_acc_num, inserted_password);
+          //      }
+          //      else
+          //      {
+          //          error_print(cmd_line, inserted_acc_num, 0, exist_account);
+          //      }
+            
+                    break;
 
             case 'Q':
-                if (exist_account)
+            	Q_function(inserted_acc_num, inserted_password);
+            	/*
+            	if (exist_account)
                 {
                     if(exist_account)
                     {
@@ -333,10 +659,14 @@ void atm::all_functions_caller()
                 {
                     error_print(cmd_line, inserted_acc_num, 0, exist_account);
                 }
-                break;
+                */ break;
 
             case 'T':
-                line_stream >> target_account >> inserted_balance;
+            	line_stream >> target_account >> inserted_balance;
+                T_function(inserted_acc_num, inserted_password, inserted_balance, target_account);
+                
+                /*
+            	line_stream >> target_account >> inserted_balance;
                 int exist_acc_target = 0;
                 account* target_acc_inst;
                 target_acc_inst = find_account(target_account, &exist_acc_target);
@@ -349,7 +679,7 @@ void atm::all_functions_caller()
                 {
                     error_print(cmd_line, inserted_acc_num, target_account, exist_account);
                 }
-                break;
+                */break;
         }
 
         // if there is an illegal command
