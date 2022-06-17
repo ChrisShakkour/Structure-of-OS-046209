@@ -40,13 +40,14 @@ bool bank::commission()
         curr_balance = i->second.balance;
         i->second.unlock_for_writers();
         
-        curr_comiss = (int)((rand_num / 100) * curr_balance);
+        curr_comiss = (int)((rand_num * curr_balance)/100);
         i->second.lock_for_readers();
         i->second.balance = curr_balance - curr_comiss;
         i->second.unlock_for_readers();
                         
         pthread_mutex_lock(&mutex_log_print);
-        output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << "\n";
+        output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << endl;
+        usleep(100);
         pthread_mutex_unlock(&mutex_log_print);
         tot_comiss += curr_comiss;
     }
@@ -66,7 +67,7 @@ bool bank::bank_balance_print()
     map<int, account>::iterator i;
     map<int, account>::iterator i_begin = map_accounts_ptr->begin();
     map<int, account>::iterator i_last = map_accounts_ptr->end();
-    for (i = i_begin; i != i_last; ++i)
+    for (i = i_begin; i != i_last; i++)
     {
         i->second.lock_for_writers();
         int curr_acc_num = i->second.account_num;
@@ -171,10 +172,13 @@ int main(int argc, char* argv[])
     atm* temp_atm;
     output_log.open("log.txt", ios::out);   
     
+    
+    
 	// atm threads pointers.
 	pthread_t* atm_thread_ptr = new pthread_t[num_of_atm];
     for (int i = 0; i < num_of_atm; i++) {
         temp_atm = new atm(i+1, &map_of_accounts, files_vector[i], &main_bank->mutex_log_print, &main_bank->mutex_global_accounts);
+        usleep(100);
         if (pthread_create(&atm_thread_ptr[i], NULL, atm_routine, (void *)temp_atm)) {
             perror("Error: thread fail");
         }
@@ -182,12 +186,14 @@ int main(int argc, char* argv[])
     }
     
 	// thread for printing the status of all acounts.
-	pthread_t status_print_thread;
+    usleep(100);
+    pthread_t status_print_thread;
     if (pthread_create(&status_print_thread, NULL, bank_status_routine, (void*)main_bank))
         perror("Error: thread fail");
 
     
 	// bank commision charge thread.
+    usleep(100);
 	pthread_t commision_charge_thread;
     if (pthread_create(&commision_charge_thread, NULL, bank_commission_routine, (void*)main_bank))
         perror("Error: thread fail");
