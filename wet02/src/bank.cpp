@@ -20,6 +20,8 @@ int num_of_atm;
 // output file
 ofstream output_log;
 
+
+
 // a function who takes random commission from all the accounts
 bool bank::commission()
 {
