@@ -454,11 +454,7 @@ void atm::T_function(int inserted_acc_num, int inserted_password, int inserted_a
 	    			                output_log << atm_num << ": Transfer " << inserted_amount << " from account " << local_acc_num << " to account " << target_acc_num << " new account balance is " << (local_acc_balance-inserted_amount) << " new target balance is " << (target_acc_balance+inserted_amount) << endl;
 	    							usleep(100);
 	    			                pthread_mutex_unlock(mutex_log_print_ptr);
-<<<<<<< HEAD
 	    			                pthread_mutex_unlock(mutex_global_accounts_ptr);
-=======
-	    				    		pthread_mutex_unlock(mutex_global_accounts_ptr);
->>>>>>> eb50cc56d1ec6e629599acab386acffe9a5cbe75
 	    			                return;
 	    			            }
 	    			            else {
@@ -478,13 +474,8 @@ void atm::T_function(int inserted_acc_num, int inserted_password, int inserted_a
 						output_log << "Error " << atm_num << ": Your transaction failed – account id " << target_acc_num << " does not exist" << endl;
 						usleep(100);
 						pthread_mutex_unlock(mutex_log_print_ptr);
-<<<<<<< HEAD
 						pthread_mutex_unlock(mutex_global_accounts_ptr);
 						return;
-=======
-			    		pthread_mutex_unlock(mutex_global_accounts_ptr);
-			    		return;
->>>>>>> eb50cc56d1ec6e629599acab386acffe9a5cbe75
 					}	
 	    		}
 	    		else {	
@@ -492,11 +483,7 @@ void atm::T_function(int inserted_acc_num, int inserted_password, int inserted_a
 	    		    output_log << "Error " << atm_num << ": Your transaction failed – password for account id " << local_acc_num << " is incorrect" << endl;
 					usleep(100);
 	    		    pthread_mutex_unlock(mutex_log_print_ptr);
-<<<<<<< HEAD
 	    		    pthread_mutex_unlock(mutex_global_accounts_ptr);
-=======
-		    		pthread_mutex_unlock(mutex_global_accounts_ptr);
->>>>>>> eb50cc56d1ec6e629599acab386acffe9a5cbe75
 	    		    return;
 	    		}	    		
 	    	}	        
