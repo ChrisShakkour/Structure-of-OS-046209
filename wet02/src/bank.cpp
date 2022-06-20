@@ -49,7 +49,7 @@ bool bank::commission()
                         
         pthread_mutex_lock(&mutex_log_print);
         output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << endl;
-        usleep(100);
+        
         pthread_mutex_unlock(&mutex_log_print);
         tot_comiss += curr_comiss;
     }
