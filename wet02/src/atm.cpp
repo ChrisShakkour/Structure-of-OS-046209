@@ -367,7 +367,6 @@ void atm::Q_function(int inserted_acc_num, int inserted_password)
 		    		map_accounts_ptr->erase(It);
 		    		pthread_mutex_lock(mutex_log_print_ptr);
 		            output_log << atm_num << ": Account " << local_acc_num << " is now closed. Balance was " << local_acc_balance << endl;
-					usleep(100);
 					pthread_mutex_unlock(mutex_log_print_ptr);
 		    		pthread_mutex_unlock(mutex_global_accounts_ptr);
 					return;	
@@ -375,7 +374,6 @@ void atm::Q_function(int inserted_acc_num, int inserted_password)
 	    		else {
 	    		    pthread_mutex_lock(mutex_log_print_ptr);
 	    		    output_log << "Error " << atm_num << ": Your transaction failed – password for account id " << local_acc_num << " is incorrect" << endl;
-					usleep(100);
 	    		    pthread_mutex_unlock(mutex_log_print_ptr);
 		    		pthread_mutex_unlock(mutex_global_accounts_ptr);
 	    		    return;
