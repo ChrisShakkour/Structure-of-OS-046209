@@ -9,7 +9,7 @@
 
 // DEFINES
 #define ATM_SLEEP 100000    //100msec
-#define ATM_OP_TIME 1000000 //1 sec
+#define ATM_OP_TIME 1 //1 sec
 
 
 using namespace std;
@@ -49,10 +49,10 @@ public:
         }
         
         // ATM methods
-        void wrong_password_check_and_print (int acc_id, int acc_password, int user_password);
-        void erase_account_by_id(int local_account_num);
-        account* find_account(int inserted_acc_num, int* account_found);
-        void error_print(char letter, int inserted_acc_num, int target_account, int is_found);
+//        void wrong_password_check_and_print (int acc_id, int acc_password, int user_password);
+//        void erase_account_by_id(int local_account_num);
+//        account* find_account(int inserted_acc_num, int* account_found);
+//        void error_print(char letter, int inserted_acc_num, int target_account, int is_found);
         bool init_atm_func(void* atm_inst);
         void all_functions_caller();
         void O_function(int inserted_acc_num, int inserted_password, int inserted_balance);
