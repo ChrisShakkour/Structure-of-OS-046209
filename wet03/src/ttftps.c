@@ -11,7 +11,7 @@
 #include <ctype.h>
 #define __USE_C99_MATH
 
-//#define DEBUG_OFF
+#define DEBUG_OFF
 
 #define FULL_BLOCK_SIZE 516
 #define FULL_DATA_SIZE 512
@@ -176,10 +176,6 @@ int is_client_exist(buffer_t buffer, struct sockaddr* echoClntAddr)
 	{
 		if (!strcmp(clients_array[i].sa_data, echoClntAddr->sa_data))
 		{
-#ifndef DEBUG_OFF
-        	fprintf(stderr, "Client %s exists ", clients_array[i].sa_data);
-        	perror("");
-#endif
 			return i;
 		}
 	}
@@ -253,13 +249,22 @@ int main(int argc, char* argv[]) {
 		struct timeval wait_time;
 		wait_time.tv_sec = wait_for_packet_time;
 		wait_time.tv_usec = 0;
-    	
+
+		/*
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Opcode recieved: OPCODE 0x%x ", ntohs(client_buffer.Opcode), );
+        	perror("");
+#endif
+		*/
         if ((recvMsgSize = recvfrom(sock, &client_buffer, size_client_buffer, 0, (struct sockaddr*) & echoClntAddr, &cliAddrLen)) < 0) 
         {
             close(sock);
             perror("TTFTP_ERROR: recvfrom error");
             exit(1);
         }
+#ifndef DEBUG_OFF
+        sleep(1);
+#endif
             
         
 ///////////////////////////////////////////////////////////////////////////////
@@ -270,7 +275,7 @@ int main(int argc, char* argv[]) {
         if (current_opcode == WRQ_OPCODE) // first msg from client
         {
 #ifndef DEBUG_OFF
-        	fprintf(stderr, "WRQ opcode recieved: OPCODE 0x%x ", current_opcode);
+        	fprintf(stderr, "\nWRQ opcode recieved: OPCODE 0x%x ", current_opcode);
         	perror("");
 #endif
         	memcpy(&WRQ_msg_inst, &client_buffer, recvMsgSize);
@@ -285,6 +290,10 @@ int main(int argc, char* argv[]) {
 				ERROR_msg_inst.ErrorCode = htons(4); 
 				int current_ack_opcode = htons(ERROR_OPCODE);
 				ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Unexpected packet", current_ack_opcode);
+        	perror("");
+#endif
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 				   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -301,6 +310,10 @@ int main(int argc, char* argv[]) {
 				ERROR_msg_inst.ErrorCode = htons(4); 
 				int current_ack_opcode = htons(ERROR_OPCODE);
 				ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x Illegal WRQ", current_ack_opcode);
+        	perror("");
+#endif
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 				   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -318,11 +331,12 @@ int main(int argc, char* argv[]) {
 				ERROR_msg_inst.ErrorCode = htons(6); 
 				int current_ack_opcode = htons(ERROR_OPCODE);
 				ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: File already exists %s ", current_ack_opcode, WRQ_msg_inst.File_Name);
+        	perror("");
+#endif
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
-#ifndef DEBUG_OFF
-        	perror("no data incomming");
-#endif
 				   perror("TTFTP_ERROR: error while sending ack back to client");
 				   exit(1);
 				}      
@@ -347,6 +361,10 @@ int main(int argc, char* argv[]) {
 			ACK_msg_inst.Opcode = current_ack_opcode;
 			ACK_msg_inst.Block_Number = current_ack_block_number;
 			int ack_msg_size = sizeof(ACK_msg_inst);
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: New client was added ", current_ack_opcode);
+        	perror("");
+#endif			
 			if (sendto(sock, &ACK_msg_inst, ack_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 			{
 				fclose(clients_array[index].fd);
@@ -365,7 +383,7 @@ int main(int argc, char* argv[]) {
         	fprintf(stderr, "DATA opcode recieved: OPCODE 0x%x ", current_opcode);
         	perror("");
 #endif
-        	// make sure that client already exist
+        	// make sure that client already exists
             index = is_client_exist(client_buffer, (struct sockaddr*) & echoClntAddr);
 
         	if (index < 0)
@@ -376,6 +394,10 @@ int main(int argc, char* argv[]) {
 				ERROR_msg_inst.ErrorCode = htons(7); 
 				int current_ack_opcode = htons(ERROR_OPCODE);
 				ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Unknown user ", current_ack_opcode);
+        	perror("");
+#endif
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 				   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -397,6 +419,10 @@ int main(int argc, char* argv[]) {
 				ERROR_msg_inst.ErrorCode = htons(0); 
 				int current_ack_opcode = htons(ERROR_OPCODE);
 				ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Bad block number ", current_ack_opcode);
+        	perror("");
+#endif
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 				   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -430,7 +456,10 @@ int main(int argc, char* argv[]) {
 				clients_array[index].block_number++;
 				int current_ack_block_number = htons(clients_array[index].block_number);
 				ACK_msg_inst.Block_Number = current_ack_block_number;
-        		
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Last block ", current_ack_opcode);
+        	perror("");
+#endif        		
         		if (sendto(sock, &ACK_msg_inst, ack_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 					fclose(clients_array[index].fd);
@@ -457,7 +486,10 @@ int main(int argc, char* argv[]) {
 				clients_array[index].block_number++;
 				int current_ack_block_number = htons(clients_array[index].block_number);
 				ACK_msg_inst.Block_Number = current_ack_block_number;
-        		
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Block recieved %d ", current_ack_opcode, current_ack_block_number);
+        	perror("");
+#endif
         		if (sendto(sock, &ACK_msg_inst, ack_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 					fclose(clients_array[index].fd);
@@ -479,6 +511,10 @@ int main(int argc, char* argv[]) {
 			ERROR_msg_inst.ErrorCode = htons(4); 
 			int current_ack_opcode = htons(ERROR_OPCODE);
 			ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Illegal OPCODE", current_ack_opcode);
+        	perror("");
+#endif
 			if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 			{
 			   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -516,6 +552,10 @@ int main(int argc, char* argv[]) {
 						ERROR_msg_inst.ErrorCode = htons(0); 
 						int current_ack_opcode = htons(ERROR_OPCODE);
 						ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Abandoning file transmission ", current_ack_opcode);
+        	perror("");
+#endif
 						if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & clients_array[i].addr, sizeof(clients_array[i].addr)) < 0) 
 						{
 						   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -553,6 +593,10 @@ int main(int argc, char* argv[]) {
 							ERROR_msg_inst.ErrorCode = htons(0); 
 							int current_ack_opcode = htons(ERROR_OPCODE);
 							ACK_msg_inst.Opcode = current_ack_opcode;
+#ifndef DEBUG_OFF
+        	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Abandoning file transmission ", current_ack_opcode);
+        	perror("");
+#endif
 							if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & clients_array[i].addr, sizeof(clients_array[i].addr)) < 0) 
 							{
 							   perror("TTFTP_ERROR: error while sending ack back to client");
