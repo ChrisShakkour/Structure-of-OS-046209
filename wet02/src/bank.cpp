@@ -34,6 +34,7 @@ bool bank::commission()
 	int curr_balance; 
     int curr_comiss;
     
+    pthread_mutex_lock(&mutex_log_print);    
     map<int, account>::iterator i;
     for (i=map_accounts_ptr->begin(); i!=map_accounts_ptr->end(); i++)
     {    	
@@ -47,12 +48,11 @@ bool bank::commission()
         i->second.balance = curr_balance - curr_comiss;
         i->second.unlock_for_readers();
                         
-        pthread_mutex_lock(&mutex_log_print);
         output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << endl;
         
-        pthread_mutex_unlock(&mutex_log_print);
         tot_comiss += curr_comiss;
     }
+    pthread_mutex_unlock(&mutex_log_print);
     pthread_mutex_unlock(&mutex_global_accounts);
     current_balance_bank += tot_comiss;
     if (!is_atm_finished) {return false;}

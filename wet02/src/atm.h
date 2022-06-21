@@ -9,7 +9,7 @@
 
 // DEFINES
 #define ATM_SLEEP 100000    //100msec
-#define ATM_OP_TIME 1000000 //1 sec
+#define ATM_OP_TIME 1 //1 sec
 
 
 using namespace std;
