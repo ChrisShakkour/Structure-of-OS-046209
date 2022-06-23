@@ -118,6 +118,8 @@ void atm::O_function(int inserted_acc_num, int inserted_password, int inserted_b
 	// else iterate over to check if exists
 	// unlock map mutex
 	pthread_mutex_lock(mutex_global_accounts_ptr);
+	//sleep(ATM_OP_TIME);
+
 	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()){
 		pthread_mutex_lock(mutex_log_print_ptr);
 		output_log << atm_num << ": your transaction failed - account with the same id exists" << endl;
@@ -154,6 +156,7 @@ void atm::D_function(int inserted_acc_num, int inserted_password, int inserted_a
 	
 	// #########################
 	pthread_mutex_lock(mutex_global_accounts_ptr);
+//	sleep(ATM_OP_TIME);
 	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
 		map<int, account>::iterator It;
 	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
@@ -220,6 +223,7 @@ void atm::W_function(int inserted_acc_num, int inserted_password, int inserted_a
 	
 	// #########################
 	pthread_mutex_lock(mutex_global_accounts_ptr);
+	//sleep(ATM_OP_TIME);
 	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
 		map<int, account>::iterator It;
 	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
@@ -291,6 +295,7 @@ void atm::B_function(int inserted_acc_num, int inserted_password)
 	
 	// #########################
 	pthread_mutex_lock(mutex_global_accounts_ptr);
+	//sleep(ATM_OP_TIME);
 	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
 		map<int, account>::iterator It;
 	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)
@@ -351,6 +356,7 @@ void atm::Q_function(int inserted_acc_num, int inserted_password)
 	
 	// #########################
 	pthread_mutex_lock(mutex_global_accounts_ptr);
+	//sleep(ATM_OP_TIME);
 	if(map_accounts_ptr->find(inserted_acc_num) != map_accounts_ptr->end()) {	
 		map<int, account>::iterator It;
 	    for (It=map_accounts_ptr->begin(); It!=map_accounts_ptr->end(); It++)

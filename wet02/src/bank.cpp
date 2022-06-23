@@ -180,7 +180,6 @@ int main(int argc, char* argv[])
 	pthread_t* atm_thread_ptr = new pthread_t[num_of_atm];
     for (int i = 0; i < num_of_atm; i++) {
         temp_atm = new atm(i+1, &map_of_accounts, files_vector[i], &main_bank->mutex_log_print, &main_bank->mutex_global_accounts);
-        usleep(100);
         if (pthread_create(&atm_thread_ptr[i], NULL, atm_routine, (void *)temp_atm)) {
             perror("Error: thread fail");
         }
@@ -188,14 +187,12 @@ int main(int argc, char* argv[])
     }
     
 	// thread for printing the status of all acounts.
-    usleep(100);
     pthread_t status_print_thread;
     if (pthread_create(&status_print_thread, NULL, bank_status_routine, (void*)main_bank))
         perror("Error: thread fail");
 
     
 	// bank commision charge thread.
-    usleep(100);
 	pthread_t commision_charge_thread;
     if (pthread_create(&commision_charge_thread, NULL, bank_commission_routine, (void*)main_bank))
         perror("Error: thread fail");

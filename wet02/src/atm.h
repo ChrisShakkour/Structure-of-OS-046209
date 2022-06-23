@@ -44,8 +44,8 @@ public:
         // class distructor
         ~atm() 
         {
-                pthread_mutex_destroy(mutex_log_print_ptr);
-                pthread_mutex_destroy(mutex_global_accounts_ptr);
+                //pthread_mutex_destroy(mutex_log_print_ptr);
+                //pthread_mutex_destroy(mutex_global_accounts_ptr);
         }
         
         // ATM methods
