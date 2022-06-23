@@ -20,30 +20,39 @@ int num_of_atm;
 // output file
 ofstream output_log;
 
+
+
 // a function who takes random commission from all the accounts
 bool bank::commission()
 {
     pthread_mutex_lock(&mutex_global_accounts);
     int tot_comiss = 0;
-    map<int, account>::iterator i;
     srand((unsigned) time(0));
     double rand_num = (rand() % 5) + 1;
-    map<int, account>::iterator begin_i = map_accounts_ptr->begin();
-    map<int, account>::iterator last_i = map_accounts_ptr->end();
-
-    for (i = begin_i; i != last_i; ++i)
-    {
+    
+    int curr_acc;
+	int curr_balance; 
+    int curr_comiss;
+    
+    pthread_mutex_lock(&mutex_log_print);    
+    map<int, account>::iterator i;
+    for (i=map_accounts_ptr->begin(); i!=map_accounts_ptr->end(); i++)
+    {    	
         i->second.lock_for_writers();
-        int curr_balance = i->second.balance;
-        int curr_comiss = (int)((rand_num / 100) * curr_balance);
-        i->second.balance = curr_balance - curr_comiss;
-        int curr_acc = i->second.account_num;
-        pthread_mutex_lock(&mutex_log_print);
-        output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << "\n";
-        pthread_mutex_unlock(&mutex_log_print);
-        tot_comiss += curr_comiss;
+        curr_acc = i->second.account_num;
+        curr_balance = i->second.balance;
         i->second.unlock_for_writers();
+        
+        curr_comiss = (int)((rand_num * curr_balance)/100);
+        i->second.lock_for_readers();
+        i->second.balance = curr_balance - curr_comiss;
+        i->second.unlock_for_readers();
+                        
+        output_log << "Bank: commissions of " << rand_num << " % were charged, the bank gained " << curr_comiss << " $ from account " << curr_acc << endl;
+        
+        tot_comiss += curr_comiss;
     }
+    pthread_mutex_unlock(&mutex_log_print);
     pthread_mutex_unlock(&mutex_global_accounts);
     current_balance_bank += tot_comiss;
     if (!is_atm_finished) {return false;}
@@ -60,13 +69,13 @@ bool bank::bank_balance_print()
     map<int, account>::iterator i;
     map<int, account>::iterator i_begin = map_accounts_ptr->begin();
     map<int, account>::iterator i_last = map_accounts_ptr->end();
-    for (i = i_begin; i != i_last; ++i)
+    for (i = i_begin; i != i_last; i++)
     {
-        i->second.lock_for_readers();
+        i->second.lock_for_writers();
         int curr_acc_num = i->second.account_num;
         int curr_acc_balance = i->second.balance;
         int curr_acc_password = i->second.password;
-        i->second.unlock_for_readers();
+        i->second.unlock_for_writers();
         cout << "Account " << curr_acc_num << ": Balance – " << curr_acc_balance << " $, Account Password – " << curr_acc_password << endl;
     }
     cout << "." << endl;
@@ -165,6 +174,8 @@ int main(int argc, char* argv[])
     atm* temp_atm;
     output_log.open("log.txt", ios::out);   
     
+    
+    
 	// atm threads pointers.
 	pthread_t* atm_thread_ptr = new pthread_t[num_of_atm];
     for (int i = 0; i < num_of_atm; i++) {
@@ -176,7 +187,7 @@ int main(int argc, char* argv[])
     }
     
 	// thread for printing the status of all acounts.
-	pthread_t status_print_thread;
+    pthread_t status_print_thread;
     if (pthread_create(&status_print_thread, NULL, bank_status_routine, (void*)main_bank))
         perror("Error: thread fail");
 

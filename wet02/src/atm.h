@@ -9,7 +9,7 @@
 
 // DEFINES
 #define ATM_SLEEP 100000    //100msec
-#define ATM_OP_TIME 1000000 //1 sec
+#define ATM_OP_TIME 1 //1 sec
 
 
 using namespace std;
@@ -46,24 +46,25 @@ public:
         // class distructor
         ~atm() 
         {
-                pthread_mutex_destroy(mutex_log_print_ptr);
-                pthread_mutex_destroy(mutex_global_accounts_ptr);
+                //pthread_mutex_destroy(mutex_log_print_ptr);
+                //pthread_mutex_destroy(mutex_global_accounts_ptr);
         }
         
         // ATM methods
-        void wrong_password_check_and_print (int acc_id, int acc_password, int user_password);
-        void erase_account_by_id(int local_account_num);
-        account* find_account(int inserted_acc_num, int* account_found);
-        void error_print(char letter, int inserted_acc_num, int target_account, int is_found);
-        int AtmTotal()const{return *total_atm;}
+
+//        void wrong_password_check_and_print (int acc_id, int acc_password, int user_password);
+//        void erase_account_by_id(int local_account_num);
+//        account* find_account(int inserted_acc_num, int* account_found);
+//        void error_print(char letter, int inserted_acc_num, int target_account, int is_found);
+
         bool init_atm_func(void* atm_inst);
         void all_functions_caller();
         void O_function(int inserted_acc_num, int inserted_password, int inserted_balance);
-        void D_function(int inserted_password, int inserted_amount, account* account_ptr);
-        void W_function(int inserted_password, int inserted_amount, account* account_ptr);
-        void B_function(int inserted_password, account* account_ptr);
-        void Q_function(int inserted_password, account* account_ptr);
-        void T_function(int inserted_password_src, int inserted_amount, account* account_src_ptr, account* account_dest_ptr);
+        void D_function(int inserted_acc_num, int inserted_password, int inserted_amount);
+        void W_function(int inserted_acc_num, int inserted_password, int inserted_amount);
+        void B_function(int inserted_acc_num, int inserted_password);
+        void Q_function(int inserted_acc_num, int inserted_password);
+        void T_function(int inserted_acc_num, int inserted_password, int inserted_amount, int target_acc_num);
 };
 
 #endif

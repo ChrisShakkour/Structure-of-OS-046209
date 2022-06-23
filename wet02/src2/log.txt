@@ -1,0 +1,354 @@
+1: New account id is 12345 with password 1234 and initial balance 100
+Error 2: Your transaction failed – account with the same id exists
+Error 4: Your transaction failed – account with the same id exists
+Error 5: Your transaction failed – account with the same id exists
+Error 3: Your transaction failed – account with the same id exists
+Error 6: Your transaction failed – account with the same id exists
+8: New account id is 12346 with password 1233 and initial balance 50
+Error 9: Your transaction failed – account with the same id exists
+Error 11: Your transaction failed – account with the same id exists
+12: New account id is 12345 with password 1234 and initial balance 100
+Error 13: Your transaction failed – account with the same id exists
+Error 14: Your transaction failed – account with the same id exists
+Error 10: Your transaction failed – account with the same id exists
+Error 15: Your transaction failed – account with the same id exists
+Error 16: Your transaction failed – account with the same id exists
+Error 17: Your transaction failed – account with the same id exists
+Error 19: Your transaction failed – account with the same id exists
+20: New account id is 12345 with password 1234 and initial balance 500
+Error 21: Your transaction failed – account with the same id exists
+Error 22: Your transaction failed – account with the same id exists
+Error 23: Your transaction failed – account with the same id exists
+Error 24: Your transaction failed – account with the same id exists
+Error 25: Your transaction failed – account with the same id exists
+Error 30: Your transaction failed – account with the same id exists
+28: New account id is 12345 with password 1234 and initial balance 100
+Error 31: Your transaction failed – account with the same id exists
+Error 27: Your transaction failed – account with the same id exists
+Error 32: Your transaction failed – account with the same id exists
+Error 26: Your transaction failed – account with the same id exists
+Error 34: Your transaction failed – account with the same id exists
+Error 33: Your transaction failed – account with the same id exists
+Error 35: Your transaction failed – account with the same id exists
+Error 36: Your transaction failed – account with the same id exists
+Error 38: Your transaction failed – account with the same id exists
+Error 37: Your transaction failed – account with the same id exists
+Error 39: Your transaction failed – account with the same id exists
+Error 41: Your transaction failed – account with the same id exists
+42: New account id is 12345 with password 1234 and initial balance 500
+Error 43: Your transaction failed – account with the same id exists
+Error 44: Your transaction failed – account with the same id exists
+Error 45: Your transaction failed – account with the same id exists
+Error 46: Your transaction failed – account with the same id exists
+Error 47: Your transaction failed – account with the same id exists
+Error 49: Your transaction failed – account with the same id exists
+Error 48: Your transaction failed – account with the same id exists
+Error 52: Your transaction failed – account with the same id exists
+50: New account id is 12345 with password 1234 and initial balance 100
+Error 53: Your transaction failed – account with the same id exists
+Error 54: Your transaction failed – account with the same id exists
+Error 55: Your transaction failed – account with the same id exists
+Bank: commissions of 4 % were charged, the bank gained 4 $ from account 12345
+Bank: commissions of 4 % were charged, the bank gained 2 $ from account 12346
+1: Account 12345 new balance is 86 after 10 $ was withdrew
+5: Account 12346 new balance is 248 after 200 $ was deposited
+4: Account 12345 new balance is 586 after 500 $ was deposited
+3: Account 12345 new balance is 886 after 300 $ was deposited
+8: Account 12346 new balance is 198 after 50 $ was withdrew
+2: Account 12345 new balance is 836 after 50 $ was withdrew
+6: Account 12345 new balance is 1036 after 200 $ was deposited
+9: New account id is 12350 with password 1250 and initial balance 50
+13: Account 12345 new balance is 986 after 50 $ was withdrew
+11: Account 12346 new balance is 148 after 50 $ was withdrew
+12: Account 12345 new balance is 976 after 10 $ was withdrew
+14: Account 12345 new balance is 1276 after 300 $ was deposited
+7: Account 12345 new balance is 1226 after 50 $ was withdrew
+15: Account 12345 new balance is 1726 after 500 $ was deposited
+Error 16: Your transaction failed – account id 12346 does not exist
+17: Account 12345 new balance is 1926 after 200 $ was deposited
+Error 22: Your transaction failed – account id 12346 does not exist
+Error 21: Your transaction failed – account id 12346 does not exist
+Error 19: Your transaction failed – account id 12346 does not exist
+18: Account 12345 new balance is 1876 after 50 $ was withdrew
+Error 20: Your transaction failed – account with the same id exists
+24: Account 12345 new balance is 1826 after 50 $ was withdrew
+23: Account 12345 new balance is 1816 after 10 $ was withdrew
+25: Account 12345 new balance is 2116 after 300 $ was deposited
+Error 30: Your transaction failed – account id 12346 does not exist
+29: Account 12345 new balance is 2066 after 50 $ was withdrew
+28: Account 12345 new balance is 2266 after 200 $ was deposited
+Error 31: Your transaction failed – account with the same id exists
+Error 27: Your transaction failed – account id 12346 does not exist
+Error 32: Your transaction failed – account id 12346 does not exist
+26: Account 12345 new balance is 2766 after 500 $ was deposited
+Error 33: Your transaction failed – account id 12346 does not exist
+34: Account 12345 new balance is 2756 after 10 $ was withdrew
+35: Account 12345 new balance is 2706 after 50 $ was withdrew
+36: Account 12345 new balance is 3006 after 300 $ was deposited
+37: Account 12345 new balance is 3506 after 500 $ was deposited
+Error 38: Your transaction failed – account id 12346 does not exist
+39: Account 12345 new balance is 3706 after 200 $ was deposited
+40: Account 12345 new balance is 3656 after 50 $ was withdrew
+Error 41: Your transaction failed – account id 12346 does not exist
+Error 42: Your transaction failed – account with the same id exists
+Error 43: Your transaction failed – account id 12346 does not exist
+Error 44: Your transaction failed – account id 12346 does not exist
+45: Account 12345 new balance is 3646 after 10 $ was withdrew
+46: Account 12345 new balance is 3596 after 50 $ was withdrew
+47: Account 12345 new balance is 3896 after 300 $ was deposited
+Error 49: Your transaction failed – account id 12346 does not exist
+48: Account 12345 new balance is 4396 after 500 $ was deposited
+51: Account 12345 new balance is 4346 after 50 $ was withdrew
+50: Account 12345 new balance is 4546 after 200 $ was deposited
+Error 52: Your transaction failed – account id 12346 does not exist
+Error 53: Your transaction failed – account with the same id exists
+Error 55: Your transaction failed – account id 12346 does not exist
+Error 54: Your transaction failed – account id 12346 does not exist
+5: Account 12345 new balance is 4496 after 50 $ was withdrew
+1: Account 12345 new balance is 4516 after 20 $ was deposited
+Error 3: Your transaction failed – password for account id 12345 is incorrect
+4: Account 12345 new balance is 4451 after 65 $ was withdrew
+Error 6: Your transaction failed – password for account id 12345 is incorrect
+2: Account 12345 new balance is 4421 after 30 $ was withdrew
+Error 8: Your transaction failed – password for account id 12345 is incorrect
+10: Account 12345 new balance is 4416 after 5 $ was withdrew
+9: Account 12345 new balance is 4396 after 20 $ was withdrew
+7: Account 12345 new balance is 4406 after 10 $ was deposited
+Error 11: Your transaction failed – password for account id 12345 is incorrect
+12: Account 12345 new balance is 4426 after 20 $ was deposited
+13: Account 12345 new balance is 4396 after 30 $ was withdrew
+Error 14: Your transaction failed – password for account id 12345 is incorrect
+20: Account 12345 new balance is 4376 after 20 $ was withdrew
+Error 19: Your transaction failed – password for account id 12345 is incorrect
+18: Account 12345 new balance is 4386 after 10 $ was deposited
+Error 17: Your transaction failed – password for account id 12345 is incorrect
+Error 22: Your transaction failed – password for account id 12345 is incorrect
+21: Account 12345 new balance is 4381 after 5 $ was withdrew
+16: Account 12345 new balance is 4331 after 50 $ was withdrew
+23: Account 12345 new balance is 4351 after 20 $ was deposited
+24: Account 12345 new balance is 4321 after 30 $ was withdrew
+15: Account 12345 new balance is 4256 after 65 $ was withdrew
+Error 33: Your transaction failed – password for account id 12345 is incorrect
+32: Account 12345 new balance is 4251 after 5 $ was withdrew
+35: Account 12345 new balance is 4221 after 30 $ was withdrew
+Error 28: Your transaction failed – password for account id 12345 is incorrect
+26: Account 12345 new balance is 4156 after 65 $ was withdrew
+31: Account 12345 new balance is 4136 after 20 $ was withdrew
+34: Account 12345 new balance is 4156 after 20 $ was deposited
+27: Account 12345 new balance is 4106 after 50 $ was withdrew
+29: Account 12345 new balance is 4116 after 10 $ was deposited
+Error 30: Your transaction failed – password for account id 12345 is incorrect
+Error 36: Your transaction failed – password for account id 12345 is incorrect
+Error 25: Your transaction failed – password for account id 12345 is incorrect
+42: Account 12345 new balance is 4096 after 20 $ was withdrew
+43: Account 12345 new balance is 4091 after 5 $ was withdrew
+40: Account 12345 new balance is 4101 after 10 $ was deposited
+38: Account 12345 new balance is 4051 after 50 $ was withdrew
+Error 39: Your transaction failed – password for account id 12345 is incorrect
+45: Account 12345 new balance is 4071 after 20 $ was deposited
+Error 41: Your transaction failed – password for account id 12345 is incorrect
+Error 44: Your transaction failed – password for account id 12345 is incorrect
+37: Account 12345 new balance is 4006 after 65 $ was withdrew
+46: Account 12345 new balance is 3976 after 30 $ was withdrew
+48: Account 12345 new balance is 3911 after 65 $ was withdrew
+49: Account 12345 new balance is 3861 after 50 $ was withdrew
+Error 47: Your transaction failed – password for account id 12345 is incorrect
+Error 52: Your transaction failed – password for account id 12345 is incorrect
+Error 50: Your transaction failed – password for account id 12345 is incorrect
+53: Account 12345 new balance is 3841 after 20 $ was withdrew
+51: Account 12345 new balance is 3851 after 10 $ was deposited
+Error 55: Your transaction failed – password for account id 12345 is incorrect
+54: Account 12345 new balance is 3846 after 5 $ was withdrew
+Error 5: Your transaction failed – account id 12346 does not exist
+1: New account id is 12346 with password 1233 and initial balance 50
+2: Account 12345 new balance is 3946 after 100 $ was deposited
+4: Account 12345 new balance is 4146 after 200 $ was deposited
+3: New account id is 12349 with password 1266 and initial balance 1000
+6: Account 12345 balance is 4146
+Error 8: Your transaction failed – password for account id 12345 is incorrect
+10: Account 12346 new balance is 70 after 20 $ was deposited
+9: Account 12345 new balance is 4196 after 50 $ was deposited
+Error 7: Your transaction failed – account with the same id exists
+Error 12: Your transaction failed – account with the same id exists
+Error 11: Your transaction failed – password for account id 12345 is incorrect
+13: Account 12345 new balance is 4296 after 100 $ was deposited
+Error 14: Your transaction failed – account with the same id exists
+26: Account 12345 new balance is 4496 after 200 $ was deposited
+31: Account 12345 new balance is 4546 after 50 $ was deposited
+27: Account 12346 balance is 70
+Error 34: Your transaction failed – account with the same id exists
+35: Account 12345 new balance is 4646 after 100 $ was deposited
+17: Account 12345 balance is 4646
+Error 18: Your transaction failed – account with the same id exists
+21: Account 12346 new balance is 90 after 20 $ was deposited
+16: Account 12346 balance is 90
+Error 23: Your transaction failed – account with the same id exists
+Error 19: Your transaction failed – password for account id 12345 is incorrect
+32: Account 12346 new balance is 110 after 20 $ was deposited
+Error 30: Your transaction failed – password for account id 12345 is incorrect
+24: Account 12345 new balance is 4746 after 100 $ was deposited
+28: Account 12345 balance is 4746
+Error 22: Your transaction failed – password for account id 12345 is incorrect
+Error 29: Your transaction failed – account with the same id exists
+Error 36: Your transaction failed – account with the same id exists
+15: Account 12345 new balance is 4946 after 200 $ was deposited
+Error 25: Your transaction failed – account with the same id exists
+Error 33: Your transaction failed – password for account id 12345 is incorrect
+20: Account 12345 new balance is 4996 after 50 $ was deposited
+Error 40: Your transaction failed – account with the same id exists
+39: Account 12345 balance is 4996
+Error 41: Your transaction failed – password for account id 12345 is incorrect
+43: Account 12346 new balance is 130 after 20 $ was deposited
+Error 45: Your transaction failed – account with the same id exists
+38: Account 12346 balance is 130
+37: Account 12345 new balance is 5196 after 200 $ was deposited
+Error 44: Your transaction failed – password for account id 12345 is incorrect
+42: Account 12345 new balance is 5246 after 50 $ was deposited
+Error 47: Your transaction failed – account with the same id exists
+49: Account 12346 balance is 130
+48: Account 12345 new balance is 5446 after 200 $ was deposited
+46: Account 12345 new balance is 5546 after 100 $ was deposited
+53: Account 12345 new balance is 5596 after 50 $ was deposited
+Error 51: Your transaction failed – account with the same id exists
+50: Account 12345 balance is 5596
+Error 52: Your transaction failed – password for account id 12345 is incorrect
+Error 55: Your transaction failed – password for account id 12345 is incorrect
+54: Account 12346 new balance is 150 after 20 $ was deposited
+5: New account id is 12348 with password 1255 and initial balance 500
+1: Account 12345 new balance is 5546 after 50 $ was withdrew
+4: Account 12345 balance is 5546
+Error 8: Your transaction failed – password for account id 12345 is incorrect
+10: New account id is 12351 with password 1251 and initial balance 100
+3: Account 12349 new balance is 950 after 50 $ was withdrew
+Error 2: Your transaction failed – password for account id 12345 is incorrect
+Error 9: Your transaction failed – account id 12346 does not exist
+7: Account 12345 balance is 5546
+Error 11: Your transaction failed – password for account id 12345 is incorrect
+12: Account 12345 new balance is 5496 after 50 $ was withdrew
+Error 13: Your transaction failed – password for account id 12345 is incorrect
+14: Account 12349 new balance is 900 after 50 $ was withdrew
+34: Account 12345 new balance is 5446 after 50 $ was withdrew
+Error 35: Your transaction failed – password for account id 12345 is incorrect
+Error 16: Your transaction failed – account with the same id exists
+Error 27: Your transaction failed – account with the same id exists
+23: Account 12345 new balance is 5396 after 50 $ was withdrew
+Error 21: Your transaction failed – account with the same id exists
+45: Account 12345 new balance is 5346 after 50 $ was withdrew
+Error 41: Your transaction failed – password for account id 12345 is incorrect
+Error 39: Your transaction failed – account id 12346 does not exist
+Error 43: Your transaction failed – account with the same id exists
+Error 30: Your transaction failed – password for account id 12345 is incorrect
+Error 31: Your transaction failed – account id 12346 does not exist
+Error 32: Your transaction failed – account with the same id exists
+Error 19: Your transaction failed – password for account id 12345 is incorrect
+Error 22: Your transaction failed – password for account id 12345 is incorrect
+Error 24: Your transaction failed – password for account id 12345 is incorrect
+Error 28: Your transaction failed – account id 12346 does not exist
+29: Account 12345 balance is 5346
+36: Account 12349 new balance is 850 after 50 $ was withdrew
+18: Account 12345 balance is 5346
+15: Account 12345 balance is 5346
+Error 44: Your transaction failed – password for account id 12345 is incorrect
+40: Account 12345 balance is 5346
+25: Account 12349 new balance is 800 after 50 $ was withdrew
+Error 50: Your transaction failed – account id 12346 does not exist
+Error 38: Your transaction failed – account with the same id exists
+37: Account 12345 balance is 5346
+48: Account 12345 balance is 5346
+51: Account 12345 balance is 5346
+Error 49: Your transaction failed – account with the same id exists
+26: Account 12345 balance is 5346
+Error 17: Your transaction failed – account id 12346 does not exist
+Error 42: Your transaction failed – account id 12346 does not exist
+Error 33: Your transaction failed – password for account id 12345 is incorrect
+Error 52: Your transaction failed – password for account id 12345 is incorrect
+Error 20: Your transaction failed – account id 12346 does not exist
+Error 53: Your transaction failed – account id 12346 does not exist
+47: Account 12349 new balance is 750 after 50 $ was withdrew
+Error 46: Your transaction failed – password for account id 12345 is incorrect
+Error 55: Your transaction failed – password for account id 12345 is incorrect
+Error 54: Your transaction failed – account with the same id exists
+Error 8: Your transaction failed – account id 12346 does not exist
+Error 4: Your transaction failed – account id 12347 does not exist
+1: Account 12345 new balance is 5386 after 40 $ was deposited
+Error 5: Your transaction failed – password for account id 12348 is incorrect
+Error 6: Your transaction failed – account id 12346 does not exist
+Error 3: Your transaction failed – account id 12345 does not exist
+2: New account id is 12347 with password 1244 and initial balance 100
+Error 7: Your transaction failed – account id 12346 does not exist
+Error 12: Your transaction failed – account id 12345 does not exist
+13: New account id is 12347 with password 1244 and initial balance 100
+Error 14: Your transaction failed – account id 12345 does not exist
+Error 11: Your transaction failed – account id 12346 does not exist
+Error 27: Your transaction failed – password for account id 12348 is incorrect
+Error 16: Your transaction failed – password for account id 12348 is incorrect
+Error 21: Your transaction failed – account id 12345 does not exist
+Error 41: Your transaction failed – account id 12346 does not exist
+Error 43: Your transaction failed – account id 12345 does not exist
+Error 32: Your transaction failed – account id 12345 does not exist
+Error 23: Your transaction failed – account id 12345 does not exist
+Error 45: Your transaction failed – account id 12345 does not exist
+Error 30: Your transaction failed – account id 12346 does not exist
+Error 19: Your transaction failed – account id 12346 does not exist
+Error 39: Your transaction failed – account id 12346 does not exist
+35: New account id is 12347 with password 1244 and initial balance 100
+Error 22: Your transaction failed – account id 12346 does not exist
+Error 28: Your transaction failed – account id 12346 does not exist
+Error 29: Your transaction failed – account id 12346 does not exist
+Error 36: Your transaction failed – account id 12345 does not exist
+Error 18: Your transaction failed – account id 12346 does not exist
+Error 44: Your transaction failed – account id 12346 does not exist
+Error 40: Your transaction failed – account id 12346 does not exist
+24: New account id is 12347 with password 1244 and initial balance 100
+Error 50: Your transaction failed – account id 12346 does not exist
+Error 25: Your transaction failed – account id 12345 does not exist
+Error 38: Your transaction failed – password for account id 12348 is incorrect
+Error 48: Your transaction failed – account id 12347 does not exist
+Error 51: Your transaction failed – account id 12346 does not exist
+Error 49: Your transaction failed – password for account id 12348 is incorrect
+Error 26: Your transaction failed – account id 12347 does not exist
+Error 17: Your transaction failed – account id 12346 does not exist
+Error 42: Your transaction failed – account id 12347 does not exist
+Error 33: Your transaction failed – account id 12346 does not exist
+Error 52: Your transaction failed – account id 12346 does not exist
+Error 20: Your transaction failed – account id 12347 does not exist
+Error 53: Your transaction failed – account id 12347 does not exist
+Error 47: Your transaction failed – account id 12345 does not exist
+Error 34: Your transaction failed – account id 12345 does not exist
+46: New account id is 12347 with password 1244 and initial balance 100
+Error 55: Your transaction failed – account id 12346 does not exist
+Error 54: Your transaction failed – account id 12345 does not exist
+Error 1: Your transaction failed – account id 12345 does not exist
+Error 10: Your transaction failed – account id 12345 does not exist
+6: Account 12347 new balance is 80 after 20 $ was withdrew
+Error 2: Your transaction failed – account id 12345 does not exist
+Error 9: Your transaction failed – account id 12345 does not exist
+Error 12: Your transaction failed – account id 12345 does not exist
+Error 13: Your transaction failed – account id 12345 does not exist
+Error 53: Your transaction failed – account id 12345 does not exist
+39: Account 12347 new balance is 60 after 20 $ was withdrew
+Error 45: Your transaction failed – account id 12345 does not exist
+Error 32: Your transaction failed – account id 12345 does not exist
+Error 42: Your transaction failed – account id 12345 does not exist
+28: Account 12347 new balance is 40 after 20 $ was withdrew
+17: Account 12347 new balance is 20 after 20 $ was withdrew
+50: Account 12347 new balance is 0 after 20 $ was withdrew
+Error 34: Your transaction failed – account id 12345 does not exist
+Error 43: Your transaction failed – account id 12345 does not exist
+Error 20: Your transaction failed – account id 12345 does not exist
+Error 23: Your transaction failed – account id 12345 does not exist
+Error 21: Your transaction failed – account id 12345 does not exist
+Error 31: Your transaction failed – account id 12345 does not exist
+Error 24: Your transaction failed – account id 12345 does not exist
+Error 35: Your transaction failed – account id 12345 does not exist
+Error 46: Your transaction failed – account id 12345 does not exist
+Error 54: Your transaction failed – account id 12345 does not exist
+Error 1: Your transaction failed – account id 12345 does not exist
+Error 12: Your transaction failed – account id 12345 does not exist
+Error 17: Your transaction failed – account id 12349 does not exist
+Error 45: Your transaction failed – account id 12345 does not exist
+Error 34: Your transaction failed – account id 12345 does not exist
+Error 39: Your transaction failed – account id 12349 does not exist
+Error 23: Your transaction failed – account id 12345 does not exist
+Error 28: Your transaction failed – account id 12349 does not exist
+Error 50: Your transaction failed – account id 12349 does not exist
