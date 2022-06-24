@@ -11,7 +11,7 @@
 #include <ctype.h>
 #define __USE_C99_MATH
 
-#define DEBUG_OFF
+//#define DEBUG_OFF
 
 #define FULL_BLOCK_SIZE 516
 #define FULL_DATA_SIZE 512
@@ -282,6 +282,7 @@ int main(int argc, char* argv[]) {
         	bool is_valid_check_client = is_filename_exist(WRQ_msg_inst.File_Name);
         	bool is_valid_add_client = add_client_to_array(WRQ_msg_inst.File_Name, (struct sockaddr*) & echoClntAddr, recvMsgSize-4);
         	
+        	//continue;
         	if (!is_valid_add_client)
 			{
 				int error_msg_size = sizeof(ERROR_msg_inst);
@@ -294,6 +295,7 @@ int main(int argc, char* argv[]) {
         	fprintf(stderr, "Sending ACK: OPCODE 0x%x: Unexpected packet", current_ack_opcode);
         	perror("");
 #endif
+        	
 				if (sendto(sock, &ERROR_msg_inst, error_msg_size, 0, (struct sockaddr*) & echoClntAddr, sizeof(echoClntAddr)) < 0) 
 				{
 				   perror("TTFTP_ERROR: error while sending ack back to client");
@@ -615,6 +617,7 @@ int main(int argc, char* argv[]) {
 				}
 			}						
 		}
+////////////////////////////////////////////////////////////////////
     }
     return 0; 
 }
