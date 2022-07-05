@@ -1,1 +1,0 @@
-./tftp localhost 50000 S send.txt file
